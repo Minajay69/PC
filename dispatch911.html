@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NightShift911 - Dispatch Interface</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'IBM Plex Mono', monospace;
+  background: #0a0a0a;
+  color: #00ff41;
+  overflow: hidden;
+}
+
+.monitor-frame {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
+  padding: 20px;
+  box-shadow: inset 0 0 100px rgba(0,255,65,0.1);
+}
+
+.crt-effect {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #0d1b0d;
+  border: 3px solid #1a3a1a;
+  box-shadow: 0 0 20px rgba(0,255,65,0.3);
+  overflow: hidden;
+}
+
+.crt-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0,0,0,0.15) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(0,0,0,0.15) 3px
+  );
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.header {
+  background: #0a1f0a;
+  border-bottom: 2px solid #00ff41;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-left h1 {
+  font-size: 18px;
+  color: #00ff41;
+  text-shadow: 0 0 10px #00ff41;
+  letter-spacing: 2px;
+}
+
+.header-right {
+  display: flex;
+  gap: 20px;
+  font-size: 14px;
+}
+
+.time {
+  color: #ffaa00;
+  text-shadow: 0 0 5px #ffaa00;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00ff41;
+  box-shadow: 0 0 10px #00ff41;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 15px;
+  padding: 15px;
+  height: calc(100vh - 90px);
+}
+
+.left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.call-display {
+  background: #0a1a0a;
+  border: 2px solid #1a3a1a;
+  border-radius: 4px;
+  padding: 20px;
+  height: 250px;
+  position: relative;
+  overflow: hidden;
+}
+
+.call-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #1a3a1a;
+}
+
+.call-id {
+  color: #ffaa00;
+  font-weight: 600;
+}
+
+.call-priority {
+  background: #ffaa00;
+  color: #000;
+  padding: 4px 12px;
+  border-radius: 3px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.call-transcript {
+  color: #00ff41;
+  font-size: 14px;
+  line-height: 1.6;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.call-transcript::-webkit-scrollbar {
+  width: 8px;
+}
+
+.call-transcript::-webkit-scrollbar-track {
+  background: #0a1a0a;
+}
+
+.call-transcript::-webkit-scrollbar-thumb {
+  background: #1a3a1a;
+  border-radius: 4px;
+}
+
+.call-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.info-item {
+  background: #0a1f0a;
+  padding: 10px;
+  border-left: 3px solid #00ff41;
+  font-size: 12px;
+}
+
+.info-label {
+  color: #888;
+  margin-bottom: 4px;
+}
+
+.info-value {
+  color: #00ff41;
+  font-weight: 600;
+}
+
+.database-panel {
+  background: #0a1a0a;
+  border: 2px solid #1a3a1a;
+  border-radius: 4px;
+  padding: 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.database-panel::-webkit-scrollbar {
+  width: 10px;
+}
+
+.database-panel::-webkit-scrollbar-track {
+  background: #0a1a0a;
+}
+
+.database-panel::-webkit-scrollbar-thumb {
+  background: #1a3a1a;
+  border-radius: 5px;
+}
+
+.tab-header {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 15px;
+  border-bottom: 2px solid #1a3a1a;
+}
+
+.tab {
+  padding: 10px 20px;
+  background: #0a1f0a;
+  border: none;
+  color: #00ff41;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+  transition: all 0.2s;
+}
+
+.tab:hover {
+  background: #1a3a1a;
+  box-shadow: 0 0 10px rgba(0,255,65,0.3);
+}
+
+.tab.active {
+  background: #1a3a1a;
+  border-bottom: 2px solid #00ff41;
+}
+
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+.search-box {
+  width: 100%;
+  background: #0a1f0a;
+  border: 2px solid #1a3a1a;
+  color: #00ff41;
+  padding: 10px;
+  margin-bottom: 15px;
+  font-family: 'IBM Plex Mono', monospace;
+  border-radius: 4px;
+}
+
+.search-box:focus {
+  outline: none;
+  border-color: #00ff41;
+  box-shadow: 0 0 10px rgba(0,255,65,0.3);
+}
+
+.empty-state {
+  text-align: center;
+  color: #888;
+  padding: 40px 20px;
+  font-size: 13px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 15px;
+  opacity: 0.3;
+}
+
+.result-card {
+  background: #0a1f0a;
+  border-left: 4px solid #ffaa00;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+}
+
+.result-date {
+  color: #888;
+  font-size: 11px;
+  margin-bottom: 5px;
+}
+
+.result-text {
+  color: #00ff41;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.teams-status {
+  background: #0a1a0a;
+  border: 2px solid #1a3a1a;
+  border-radius: 4px;
+  padding: 15px;
+}
+
+.panel-title {
+  color: #00ff41;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.team-item {
+  background: #0a1f0a;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 2px solid transparent;
+}
+
+.team-item:hover:not(.busy-unit) {
+  border-color: #00ff41;
+  box-shadow: 0 0 15px rgba(0,255,65,0.2);
+}
+
+.team-item.selected {
+  border-color: #00ff41;
+  background: #1a3a1a;
+}
+
+.team-item.busy-unit {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.team-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.team-icon {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 16px;
+}
+
+.police { background: #0066ff; }
+.fire { background: #ff6600; }
+.medical { background: #ff0066; }
+
+.team-status {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 3px;
+}
+
+.available { background: #00ff41; color: #000; }
+.busy { background: #ff3333; color: #fff; }
+
+.dispatch-panel {
+  background: #0a1a0a;
+  border: 2px solid #1a3a1a;
+  border-radius: 4px;
+  padding: 15px;
+}
+
+.priority-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.priority-btn {
+  padding: 10px;
+  background: #0a1f0a;
+  border: 2px solid #1a3a1a;
+  color: #00ff41;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.priority-btn:hover {
+  border-color: #00ff41;
+}
+
+.priority-btn.selected {
+  border-color: #ffaa00;
+  background: #1a1a0a;
+  box-shadow: 0 0 10px rgba(255,170,0,0.3);
+}
+
+.dispatch-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dispatch-btn {
+  padding: 15px;
+  background: linear-gradient(135deg, #00ff41 0%, #00cc33 100%);
+  border: none;
+  color: #000;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(0,255,65,0.3);
+}
+
+.dispatch-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,255,65,0.5);
+}
+
+.dispatch-btn:active {
+  transform: translateY(0);
+}
+
+.cancel-btn {
+  background: linear-gradient(135deg, #ff3333 0%, #cc0000 100%);
+  box-shadow: 0 4px 15px rgba(255,51,51,0.3);
+}
+
+.cancel-btn:hover {
+  box-shadow: 0 6px 20px rgba(255,51,51,0.5);
+}
+
+.resources-info {
+  margin-top: 15px;
+  padding: 12px;
+  background: #0a1f0a;
+  border-radius: 4px;
+  border-left: 3px solid #00ff41;
+}
+
+.resource-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 12px;
+}
+
+.resource-label {
+  color: #888;
+}
+
+.resource-value {
+  color: #00ff41;
+  font-weight: 600;
+}
+
+.resource-warning {
+  color: #ff6666 !important;
+}
+
+.stats-panel {
+  background: #0a1a0a;
+  border: 2px solid #1a3a1a;
+  border-radius: 4px;
+  padding: 15px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #1a3a1a;
+}
+
+.stat-label {
+  color: #888;
+  font-size: 12px;
+}
+
+.stat-value {
+  color: #00ff41;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.performance-bar {
+  width: 100%;
+  height: 8px;
+  background: #1a1a1a;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 5px;
+}
+
+.performance-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #00ff41, #00cc33);
+  width: 100%;
+  transition: width 0.3s;
+}
+
+.notification {
+  position: fixed;
+  top: 80px;
+  right: 30px;
+  background: #1a3a1a;
+  border: 2px solid #00ff41;
+  padding: 15px 20px;
+  border-radius: 4px;
+  box-shadow: 0 4px 20px rgba(0,255,65,0.5);
+  z-index: 2000;
+  animation: slideIn 0.3s ease-out;
+  max-width: 300px;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(400px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  z-index: 3000;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal.active {
+  display: flex;
+}
+
+.modal-content {
+  background: #0a1a0a;
+  border: 3px solid #00ff41;
+  border-radius: 8px;
+  padding: 30px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 0 40px rgba(0,255,65,0.5);
+}
+
+.modal-title {
+  color: #00ff41;
+  font-size: 20px;
+  margin-bottom: 20px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.modal-body {
+  color: #00ff41;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+.modal-btn {
+  padding: 12px 30px;
+  background: #1a3a1a;
+  border: 2px solid #00ff41;
+  color: #00ff41;
+  cursor: pointer;
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 600;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.modal-btn:hover {
+  background: #00ff41;
+  color: #000;
+  box-shadow: 0 0 20px rgba(0,255,65,0.5);
+}
+
+.first-call-badge {
+  background: #ffaa00;
+  color: #000;
+  padding: 4px 10px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-weight: 600;
+  display: inline-block;
+  margin-left: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="monitor-frame">
+  <div class="crt-effect">
+    
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-left">
+        <h1>◉ NIGHTSHIFT911 DISPATCH SYSTEM v2.4</h1>
+        <span class="first-call-badge">FIRST CALL OF THE NIGHT</span>
+      </div>
+      <div class="header-right">
+        <div class="time" id="clock">00:12:43 AM</div>
+        <div class="status">
+          <div class="status-dot"></div>
+          <span>ONLINE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+      
+      <!-- LEFT PANEL -->
+      <div class="left-panel">
+        
+        <!-- CALL DISPLAY -->
+        <div class="call-display">
+          <div class="call-header">
+            <div class="call-id">CALL #0001 - INCOMING</div>
+            <div class="call-priority">⚡ ROUTINE</div>
+          </div>
+          <div class="call-transcript" id="transcript">
+            Hello? Is this 911?<br>
+            Yeah, uh... my lights keep flickering.<br>
+            It's been happening for like 20 minutes now.<br>
+            I don't know... maybe it's the breaker?<br>
+            Can you send someone to check it out?<br>
+            <span style="color: #888">[Sounds calm, no distress]</span>
+          </div>
+          <div class="call-info">
+            <div class="info-item">
+              <div class="info-label">ADDRESS</div>
+              <div class="info-value">142 MAPLE STREET</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">DISTRICT</div>
+              <div class="info-value">WEST - ZONE 1</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">CALLER</div>
+              <div class="info-value">MALE, 35-45 YRS</div>
+            </div>
+            <div class="info-item">
+              <div class="info-label">DURATION</div>
+              <div class="info-value" id="duration">00:18</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DATABASE PANEL -->
+        <div class="database-panel">
+          <div class="tab-header">
+            <button class="tab active" onclick="showTab('history')">📂 HISTORY</button>
+            <button class="tab" onclick="showTab('protocols')">📋 PROTOCOLS</button>
+            <button class="tab" onclick="showTab('notes')">📝 NOTES</button>
+          </div>
+
+          <!-- HISTORY TAB -->
+          <div class="tab-content active" id="history">
+            <input type="text" class="search-box" placeholder="Search address..." value="142 maple street">
+            
+            <div class="empty-state">
+              <div class="empty-icon">📭</div>
+              <div>NO PREVIOUS CALLS FOUND</div>
+              <div style="margin-top: 10px; font-size: 11px;">
+                This is the first time this address<br>
+                has contacted emergency services.
+              </div>
+            </div>
+
+          </div>
+
+          <!-- PROTOCOLS TAB -->
+          <div class="tab-content" id="protocols">
+            <h3 style="color: #00ff41; margin-bottom: 10px;">ELECTRICAL ISSUE PROTOCOL</h3>
+            <div class="result-card">
+              <div class="result-text">
+                1. Verify if immediate danger (fire, smoke)<br>
+                2. If no danger: Refer to utility company<br>
+                3. Advise caller to avoid electrical panel<br>
+                4. Optional: Dispatch fire unit for inspection<br>
+                5. Response time: Non-urgent
+              </div>
+            </div>
+            <div class="result-card" style="margin-top: 15px; border-left-color: #00ff41;">
+              <div class="result-text">
+                ℹ️ Most electrical flickering is a utility issue.<br>
+                Unless there are signs of fire or emergency,<br>
+                direct caller to power company: 1-800-555-POWER
+              </div>
+            </div>
+          </div>
+
+          <!-- NOTES TAB -->
+          <div class="tab-content" id="notes">
+            <div class="empty-state">
+              <div class="empty-icon">📝</div>
+              <div>NO NOTES AVAILABLE</div>
+              <div style="margin-top: 10px; font-size: 11px;">
+                No operator notes for this address.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <div class="right-panel">
+        
+        <!-- TEAMS STATUS -->
+        <div class="teams-status">
+          <div class="panel-title">🚨 AVAILABLE UNITS</div>
+          
+          <div class="team-item" onclick="selectTeam(this, 'POLICE-1')">
+            <div class="team-name">
+              <div class="team-icon police">🚔</div>
+              <div>
+                <div>POLICE-1</div>
+                <div style="font-size: 10px; color: #888;">West Sector Patrol</div>
+              </div>
+            </div>
+            <div class="team-status available">AVAILABLE</div>
+          </div>
+
+          <div class="team-item" onclick="selectTeam(this, 'POLICE-2')">
+            <div class="team-name">
+              <div class="team-icon police">🚔</div>
+              <div>
+                <div>POLICE-2</div>
+                <div style="font-size: 10px; color: #888;">Downtown Patrol</div>
+              </div>
+            </div>
+            <div class="team-status available">AVAILABLE</div>
+          </div>
+
+          <div class="team-item" onclick="selectTeam(this, 'FIRE-1')">
+            <div class="team-name">
+              <div class="team-icon fire">🚒</div>
+              <div>
+                <div>FIRE-1</div>
+                <div style="font-size: 10px; color: #888;">Station West</div>
+              </div>
+            </div>
+            <div class="team-status available">AVAILABLE</div>
+          </div>
+
+          <div class="team-item" onclick="selectTeam(this, 'MEDIC-1')">
+            <div class="team-name">
+              <div class="team-icon medical">🚑</div>
+              <div>
+                <div>MEDIC-1</div>
+                <div style="font-size: 10px; color: #888;">General Hospital</div>
+              </div>
+            </div>
+            <div class="team-status available">AVAILABLE</div>
+          </div>
+
+        </div>
+
+        <!-- DISPATCH PANEL -->
+        <div class="dispatch-panel">
+          <div class="panel-title">⚡ DISPATCH</div>
+          
+          <div class="priority-selector">
+            <button class="priority-btn selected" onclick="selectPriority(this, 'routine')">ROUTINE</button>
+            <button class="priority-btn" onclick="selectPriority(this, 'urgent')">URGENT</button>
+            <button class="priority-btn" onclick="selectPriority(this, 'code-red')">CODE RED</button>
+          </div>
+
+          <div class="dispatch-actions">
+            <button class="dispatch-btn" onclick="dispatchTeam()">
+              ✓ DISPATCH UNIT(S)
+            </button>
+            <button class="dispatch-btn cancel-btn" onclick="closeCall()">
+              ✕ CLOSE WITHOUT ACTION
+            </button>
+          </div>
+
+          <div class="resources-info">
+            <div class="resource-row">
+              <span class="resource-label">UNITS SELECTED:</span>
+              <span class="resource-value" id="unitsSelected">0</span>
+            </div>
+            <div class="resource-row">
+              <span class="resource-label">POLICE AVAILABLE:</span>
+              <span class="resource-value" id="policeAvailable">2/2</span>
+            </div>
+            <div class="resource-row">
+              <span class="resource-label">FIRE AVAILABLE:</span>
+              <span class="resource-value" id="fireAvailable">1/1</span>
+            </div>
+            <div class="resource-row">
+              <span class="resource-label">MEDIC AVAILABLE:</span>
+              <span class="resource-value" id="medicAvailable">1/1</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- STATS PANEL -->
+        <div class="stats-panel">
+          <div class="panel-title">📊 SHIFT PERFORMANCE</div>
+          <div class="stat-row">
+            <div class="stat-label">Calls handled</div>
+            <div class="stat-value">0/12</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">Success rate</div>
+            <div class="stat-value">--</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">Average response</div>
+            <div class="stat-value">--</div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-label">Performance score</div>
+            <div class="stat-value">100%</div>
+          </div>
+          <div class="performance-bar">
+            <div class="performance-fill" style="width: 100%"></div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- MODAL CONFIRMATION -->
+<div class="modal" id="confirmModal">
+  <div class="modal-content">
+    <div class="modal-title">⚠ DISPATCH CONFIRMATION</div>
+    <div class="modal-body" id="modalText">
+      You are about to dispatch:<br><br>
+      <strong id="dispatchList">• FIRE-1</strong><br><br>
+      Priority: <strong id="priorityText">ROUTINE</strong><br><br>
+      This will occupy these units for approximately 15-30 minutes.<br><br>
+      Confirm this decision?
+    </div>
+    <div class="modal-buttons">
+      <button class="modal-btn" onclick="confirmDispatch()">CONFIRM</button>
+      <button class="modal-btn" onclick="closeModal()">CANCEL</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let selectedTeams = [];
+let selectedPriority = 'routine';
+
+// Available units tracking
+let availableUnits = {
+  police: 2,
+  fire: 1,
+  medic: 1
+};
+
+// Clock
+function updateClock() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds}`;
+}
+setInterval(updateClock, 1000);
+
+// Call duration
+let duration = 18;
+setInterval(() => {
+  duration++;
+  const mins = Math.floor(duration / 60);
+  const secs = duration % 60;
+  document.getElementById('duration').textContent = 
+    `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}, 1000);
+
+// Tab switching
+function showTab(tabName) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  
+  event.target.classList.add('active');
+  document.getElementById(tabName).classList.add('active');
+}
+
+// Team selection
+function selectTeam(element, teamId) {
+  if(element.classList.contains('busy-unit')) {
+    showNotification('⚠️ This unit is currently on a call');
+    return;
+  }
+  
+  element.classList.toggle('selected');
+  
+  if(element.classList.contains('selected')) {
+    selectedTeams.push(teamId);
+  } else {
+    selectedTeams = selectedTeams.filter(t => t !== teamId);
+  }
+  
+  updateResourceDisplay();
+}
+
+// Priority selection
+function selectPriority(element, priority) {
+  document.querySelectorAll('.priority-btn').forEach(b => b.classList.remove('selected'));
+  element.classList.add('selected');
+  selectedPriority = priority;
+}
+
+// Update resource display
+function updateResourceDisplay() {
+  document.getElementById('unitsSelected').textContent = selectedTeams.length;
+  
+  // Count selected units by type
+  let policeSelected = selectedTeams.filter(t => t.startsWith('POLICE')).length;
+  let fireSelected = selectedTeams.filter(t => t.startsWith('FIRE')).length;
+  let medicSelected = selectedTeams.filter(t => t.startsWith('MEDIC')).length;
+  
+  // Update display
+  let policeAvail = availableUnits.police - policeSelected;
+  let fireAvail = availableUnits.fire - fireSelected;
+  let medicAvail = availableUnits.medic - medicSelected;
+  
+  document.getElementById('policeAvailable').textContent = `${policeAvail}/${availableUnits.police}`;
+  document.getElementById('fireAvailable').textContent = `${fireAvail}/${availableUnits.fire}`;
+  document.getElementById('medicAvailable').textContent = `${medicAvail}/${availableUnits.medic}`;
+  
+  // Highlight in red if none available
+  document.getElementById('policeAvailable').className = policeAvail === 0 ? 'resource-value resource-warning' : 'resource-value';
+  document.getElementById('fireAvailable').className = fireAvail === 0 ? 'resource-value resource-warning' : 'resource-value';
+  document.getElementById('medicAvailable').className = medicAvail === 0 ? 'resource-value resource-warning' : 'resource-value';
+}
+
+// Dispatch team
+function dispatchTeam() {
+  if(selectedTeams.length === 0) {
+    showNotification('⚠️ No units selected');
+    return;
+  }
+  
+  // Build dispatch list
+  let dispatchList = selectedTeams.map(t => `• ${t}`).join('<br>');
+  document.getElementById('dispatchList').innerHTML = dispatchList;
+  document.getElementById('priorityText').textContent = selectedPriority.toUpperCase();
+  
+  document.getElementById('confirmModal').classList.add('active');
+}
+
+// Confirm dispatch
+function confirmDispatch() {
+  closeModal();
+  showNotification('✓ Units dispatched successfully');
+  
+  // Mark units as busy
+  selectedTeams.forEach(teamId => {
+    let teamElements = document.querySelectorAll('.team-item');
+    teamElements.forEach(el => {
+      if(el.textContent.includes(teamId.split('-')[0] + '-' + teamId.split('-')[1])) {
+        el.classList.add('busy-unit');
+        el.querySelector('.team-status').textContent = 'ON CALL';
+        el.querySelector('.team-status').className = 'team-status busy';
+      }
+    });
+  });
+  
+  setTimeout(() => {
+    showNotification('📻 Units en route to 142 Maple Street...');
+  }, 2000);
+  
+  setTimeout(() => {
+    showNotification('📻 Units on scene. Electrical issue confirmed - utility company notified.');
+  }, 5000);
+  
+  // Reset selection
+  selectedTeams = [];
+  document.querySelectorAll('.team-item').forEach(t => t.classList.remove('selected'));
+  updateResourceDisplay();
+}
+
+// Close call
+function closeCall() {
+  if(confirm('Are you sure you want to close this call without dispatching units?\n\n' + 
+             'RECOMMENDATION: Electrical issues with no emergency signs should be referred to the power company.\n\n' +
+             'This will save your emergency resources for real emergencies.')) {
+    showNotification('📞 Call closed - Caller referred to utility company (1-800-555-POWER)');
+    setTimeout(() => {
+      showNotification('✓ Good decision! Resources preserved for real emergencies.');
+    }, 2000);
+    setTimeout(() => {
+      showNotification('📞 Next call incoming...');
+    }, 4000);
+  }
+}
+
+// Modal controls
+function closeModal() {
+  document.getElementById('confirmModal').classList.remove('active');
+}
+
+// Notification system
+function showNotification(message) {
+  const notif = document.createElement('div');
+  notif.className = 'notification';
+  notif.textContent = message;
+  document.body.appendChild(notif);
+  
+  setTimeout(() => {
+    notif.style.animation = 'slideIn 0.3s ease-out reverse';
+    setTimeout(() => notif.remove(), 300);
+  }, 3000);
+}
+
+// Tutorial hint for first call
+setTimeout(() => {
+  showNotification('💡 TIP: Not all 911 calls require emergency response. Use your judgment wisely!');
+}, 3000);
+
+// Initialize
+updateResourceDisplay();
+</script>
+
+</body>
+</html>
