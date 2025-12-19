@@ -3917,6 +3917,170 @@ window.addEventListener('load', function() {
     console.log("✨ Filtres sombres supprimés, interface éclaircie");
 });
 
+// ============================================
+// SUPPRESSION DES ANIMATIONS GÊNANTES
+// ============================================
+
+// Cette fonction s'exécute immédiatement
+(function disableAnnoyingAnimations() {
+    console.log("🚫 Désactivation des animations gênantes...");
+    
+    // 1. SUPPRIME LES ANIMATIONS DES BOUTONS
+    const buttons = document.querySelectorAll(
+        '.dispatch-button, .priority-button, .modal-button, .nav-tab, .unit-card'
+    );
+    buttons.forEach(btn => {
+        btn.style.animation = 'none';
+        btn.style.transition = 'none';
+    });
+    
+    // 2. SUPPRIME LE CLIGNOTEMENT DES CONTAINERS
+    const containers = document.querySelectorAll(
+        '.call-display-panel, .units-panel, .dispatch-panel, .stats-panel, .database-panel'
+    );
+    containers.forEach(container => {
+        container.style.animation = 'none';
+    });
+    
+    // 3. SUPPRIME LES EFFETS DE PULSATION
+    const pulsatingElements = document.querySelectorAll(
+        '.status-indicator, .first-night-badge, .priority-button.active, .logo-icon'
+    );
+    pulsatingElements.forEach(el => {
+        el.style.animation = 'none';
+        el.style.boxShadow = 'none';
+    });
+    
+    // 4. SUPPRIME LES ANIMATIONS DE TEXTE
+    const textElements = document.querySelectorAll(
+        '.call-id-number, .unit-name, .performance-fill, .button-glow'
+    );
+    textElements.forEach(el => {
+        el.style.animation = 'none';
+        el.style.textShadow = 'none';
+    });
+    
+    // 5. SUPPRIME LES GLOWS ET EFFETS LUMINEUX
+    const glowElements = document.querySelectorAll(
+        '.button-glow, .performance-shimmer, .icon-pulse, .radar-ping'
+    );
+    glowElements.forEach(el => {
+        el.style.animation = 'none';
+        el.style.display = 'none';
+    });
+    
+    // 6. CRÉE UN STYLE CSS POUR DÉSACTIVER TOUTES LES ANIMATIONS
+    const noAnimationStyle = document.createElement('style');
+    noAnimationStyle.textContent = `
+        /* DÉSACTIVE TOUTES LES ANIMATIONS CSS */
+        *,
+        *::before,
+        *::after {
+            animation: none !important;
+            animation-duration: 0s !important;
+            animation-iteration-count: 1 !important;
+            transition: none !important;
+            transition-duration: 0s !important;
+        }
+        
+        /* SPÉCIFIQUE AUX BOUTONS */
+        .dispatch-button::before,
+        .dispatch-button::after,
+        .priority-button::before,
+        .priority-button::after {
+            animation: none !important;
+            display: none !important;
+        }
+        
+        /* SUPPRIME LES EFFETS DE SURVOL ANIMÉS */
+        .unit-card:hover::before,
+        .dispatch-button:hover::after {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+        
+        /* SUPPRIME LES CLIGNOTEMENTS */
+        .priority-button[data-priority="critical"].active,
+        .duration-warning,
+        .warning-pulse {
+            animation: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* SUPPRIME LES ANIMATIONS DE TEXTE */
+        .call-id-number,
+        .unit-name {
+            animation: none !important;
+            text-shadow: 0 0 3px currentColor !important;
+        }
+        
+        /* STABILISE LES ICÔNES */
+        .panel-icon,
+        .logo-icon,
+        .status-dot {
+            animation: none !important;
+        }
+        
+        /* SUPPRIME LES EFFETS DE CHARGEMENT */
+        .metadata-card,
+        .performance-fill {
+            animation: none !important;
+        }
+        
+        /* SUPPRIME L'EFFET DE TEXTE QUI TAPE */
+        .transcript-line {
+            animation: none !important;
+            opacity: 1 !important;
+        }
+    `;
+    document.head.appendChild(noAnimationStyle);
+    
+    // 7. ARRÊTE TOUS LES INTERVALLES JAVASCRIPT QUI CRÉENT DES ANIMATIONS
+    const intervalIds = window.setInterval(() => {}, 9999);
+    for (let i = 1; i <= intervalIds; i++) {
+        window.clearInterval(i);
+    }
+    
+    // 8. DÉSACTIVE LES FONCTIONS D'ANIMATION DANS LE CODE EXISTANT
+    window.triggerGlitch = function() {};
+    window.triggerStaticBurst = function() {};
+    window.triggerDistortion = function() {};
+    window.corruptTranscript = function() {};
+    window.activateHorrorState = function() {};
+    
+    console.log("✅ Toutes les animations gênantes ont été désactivées !");
+    
+    // 9. AJOUTE UN BOUTON POUR RÉACTIVER (OPTIONNEL)
+    const toggleBtn = document.createElement('button');
+    toggleBtn.textContent = '⏸️ Animations OFF';
+    toggleBtn.style.position = 'fixed';
+    toggleBtn.style.top = '10px';
+    toggleBtn.style.right = '10px';
+    toggleBtn.style.zIndex = '99999';
+    toggleBtn.style.padding = '5px 10px';
+    toggleBtn.style.fontSize = '12px';
+    toggleBtn.style.cursor = 'pointer';
+    toggleBtn.style.background = '#2a2a35';
+    toggleBtn.style.color = '#fff';
+    toggleBtn.style.border = '1px solid #4a5568';
+    toggleBtn.style.borderRadius = '4px';
+    
+    let animationsDisabled = true;
+    toggleBtn.onclick = function() {
+        animationsDisabled = !animationsDisabled;
+        if (animationsDisabled) {
+            toggleBtn.textContent = '⏸️ Animations OFF';
+            noAnimationStyle.disabled = false;
+        } else {
+            toggleBtn.textContent = '▶️ Animations ON';
+            noAnimationStyle.disabled = true;
+        }
+    };
+    
+    document.body.appendChild(toggleBtn);
+})();
+
 </script>
 
 </body>
