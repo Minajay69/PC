@@ -1,0 +1,4272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NightShift911 - Emergency Dispatch Terminal</title>
+
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-primary: #0d0d12;
+  --bg-secondary: #16161d;
+  --bg-tertiary: #1c1c26;
+  --accent-primary: #4a5568;
+  --accent-danger: #8b3a3a;
+  --accent-warning: #7a6a3e;
+  --accent-success: #3a5a4a;
+  --text-primary: #c4c4c8;
+  --text-secondary: #7a7a82;
+  --text-muted: #4a4a52;
+  --border-color: #26262e;
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.8);
+  --glow-subtle: 0 0 15px rgba(74, 85, 104, 0.15);
+  --glow-dim: 0 0 20px rgba(139, 58, 58, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #0d0d12 0%, #1a1520 100%);
+  color: var(--text-primary);
+  overflow: hidden;
+  position: relative;
+}
+
+/* Atmospheric background effects */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 50%, rgba(74, 85, 104, 0.02) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(139, 58, 58, 0.015) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Subtle scanline effect */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.05) 0px,
+    transparent 1px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.05) 3px
+  );
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.4;
+  animation: scanline 8s linear infinite;
+}
+
+@keyframes scanline {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(10px); }
+}
+
+/* Vignette effect */
+body::after {
+  box-shadow: inset 0 0 200px rgba(0, 0, 0, 0.6);
+}
+
+/* Floating particles */
+.particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(74, 85, 104, 0.3);
+  border-radius: 50%;
+  animation: float linear infinite;
+}
+
+.particle:nth-child(1) {
+  left: 10%;
+  animation-duration: 15s;
+  animation-delay: 0s;
+}
+
+.particle:nth-child(2) {
+  left: 25%;
+  animation-duration: 20s;
+  animation-delay: 2s;
+}
+
+.particle:nth-child(3) {
+  left: 40%;
+  animation-duration: 18s;
+  animation-delay: 4s;
+}
+
+.particle:nth-child(4) {
+  left: 55%;
+  animation-duration: 22s;
+  animation-delay: 1s;
+}
+
+.particle:nth-child(5) {
+  left: 70%;
+  animation-duration: 17s;
+  animation-delay: 3s;
+}
+
+.particle:nth-child(6) {
+  left: 85%;
+  animation-duration: 19s;
+  animation-delay: 5s;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(100vh) translateX(0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.3;
+  }
+  90% {
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateY(-100px) translateX(50px);
+    opacity: 0;
+  }
+}
+
+/* Screen flicker effect */
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.98; }
+}
+
+.terminal-container {
+  animation: flicker 0.15s infinite;
+}
+
+/* CRT distortion */
+.crt-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+  background: 
+    radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.2) 100%);
+  animation: crtDistort 10s ease-in-out infinite;
+}
+
+@keyframes crtDistort {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.002); }
+}
+
+/* Glitch effect for call display */
+.call-display-panel {
+  animation: glitch 5s infinite;
+}
+
+@keyframes glitch {
+  0%, 90%, 100% {
+    transform: translate(0);
+    filter: hue-rotate(0deg);
+  }
+  92% {
+    transform: translate(-2px, 1px);
+    filter: hue-rotate(5deg);
+  }
+  94% {
+    transform: translate(2px, -1px);
+    filter: hue-rotate(-5deg);
+  }
+  96% {
+    transform: translate(-1px, 2px);
+  }
+}
+
+/* Text typing effect */
+@keyframes typing {
+  from { width: 0; }
+  to { width: 100%; }
+}
+
+@keyframes blink {
+  50% { border-color: transparent; }
+}
+
+/* Hologram effect */
+.hologram-effect {
+  position: relative;
+}
+
+.hologram-effect::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    transparent 0%,
+    rgba(74, 85, 104, 0.03) 2%,
+    transparent 4%
+  );
+  background-size: 100% 3px;
+  animation: scan 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  0% { background-position: 0 0; }
+  100% { background-position: 0 100%; }
+}
+
+/* Status indicator breathing */
+@keyframes breathe {
+  0%, 100% {
+    box-shadow: 0 0 8px rgba(58, 90, 74, 0.4);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(58, 90, 74, 0.7);
+    transform: scale(1.1);
+  }
+}
+
+.status-indicator {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* Electric arc effect on hover */
+.dispatch-button::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.dispatch-button:hover::after {
+  width: 200%;
+  height: 200%;
+  opacity: 0.2;
+}
+
+/* Data stream effect */
+.data-stream {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 0;
+  background: linear-gradient(to bottom, transparent, var(--accent-primary), transparent);
+  animation: dataFlow 3s ease-in-out infinite;
+  opacity: 0.4;
+}
+
+@keyframes dataFlow {
+  0% {
+    height: 0;
+    top: 0;
+  }
+  50% {
+    height: 100%;
+  }
+  100% {
+    height: 0;
+    top: 100%;
+  }
+}
+
+/* Matrix rain effect */
+.matrix-rain {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.02;
+}
+
+.rain-column {
+  position: absolute;
+  width: 20px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--accent-primary);
+  animation: rain linear infinite;
+  opacity: 0.5;
+}
+
+@keyframes rain {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.5;
+  }
+  90% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+/* Phosphor glow on text */
+.call-id-number,
+.unit-name {
+  text-shadow: 
+    0 0 5px currentColor,
+    0 0 10px currentColor,
+    0 0 15px rgba(74, 85, 104, 0.5);
+  animation: textGlow 3s ease-in-out infinite;
+}
+
+@keyframes textGlow {
+  0%, 100% {
+    text-shadow: 
+      0 0 5px currentColor,
+      0 0 10px currentColor;
+  }
+  50% {
+    text-shadow: 
+      0 0 8px currentColor,
+      0 0 15px currentColor,
+      0 0 20px rgba(74, 85, 104, 0.7);
+  }
+}
+
+/* Circuit board pattern */
+.circuit-pattern {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(74, 85, 104, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74, 85, 104, 0.03) 1px, transparent 1px);
+  background-size: 20px 20px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Power surge effect */
+@keyframes powerSurge {
+  0%, 100% { 
+    filter: brightness(1);
+    opacity: 1;
+  }
+  50% { 
+    filter: brightness(1.2);
+    opacity: 0.95;
+  }
+}
+
+.terminal-header {
+  animation: powerSurge 4s ease-in-out infinite;
+}
+
+/* Digital noise */
+@keyframes noise {
+  0%, 100% { opacity: 0.05; }
+  50% { opacity: 0.08; }
+}
+
+.digital-noise {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 9997;
+  animation: noise 0.2s infinite;
+}
+
+/* Loading bar animation */
+@keyframes loadingPulse {
+  0%, 100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scaleX(0.95);
+    opacity: 0.8;
+  }
+}
+
+.metadata-card {
+  animation: loadingPulse 3s ease-in-out infinite;
+}
+
+.metadata-card:nth-child(1) { animation-delay: 0s; }
+.metadata-card:nth-child(2) { animation-delay: 0.2s; }
+.metadata-card:nth-child(3) { animation-delay: 0.4s; }
+.metadata-card:nth-child(4) { animation-delay: 0.6s; }
+
+/* Radar ping effect */
+.radar-ping {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border: 2px solid var(--accent-primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: radarPing 3s ease-out infinite;
+  opacity: 0;
+}
+
+@keyframes radarPing {
+  0% {
+    transform: translate(-50%, -50%) scale(0.5);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
+  }
+}
+
+.logo-icon {
+  position: relative;
+}
+
+.logo-icon::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 100%;
+  border: 2px solid rgba(74, 85, 104, 0.3);
+  border-radius: 6px;
+  transform: translate(-50%, -50%);
+  animation: radarPing 3s ease-out infinite;
+}
+
+/* Screen edge glow */
+.terminal-workspace::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 1px solid transparent;
+  border-image: linear-gradient(
+    45deg,
+    transparent,
+    rgba(74, 85, 104, 0.2),
+    transparent
+  ) 1;
+  pointer-events: none;
+  animation: edgeGlow 5s ease-in-out infinite;
+}
+
+@keyframes edgeGlow {
+  0%, 100% {
+    border-image: linear-gradient(45deg, transparent, rgba(74, 85, 104, 0.2), transparent) 1;
+  }
+  50% {
+    border-image: linear-gradient(45deg, transparent, rgba(74, 85, 104, 0.4), transparent) 1;
+  }
+}
+
+/* Alert pulse for critical priority */
+@keyframes alertPulse {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(139, 58, 58, 0.3);
+    border-color: rgba(139, 58, 58, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(139, 58, 58, 0.6);
+    border-color: rgba(139, 58, 58, 0.7);
+  }
+}
+
+.priority-button[data-priority="critical"].active {
+  animation: alertPulse 1.5s ease-in-out infinite;
+}
+
+/* Morse code blink on status */
+@keyframes morseCode {
+  0%, 20%, 40%, 100% { opacity: 1; }
+  10%, 30% { opacity: 0.3; }
+  50%, 90% { opacity: 1; }
+  70% { opacity: 0.3; }
+}
+
+.first-night-badge {
+  animation: morseCode 6s ease-in-out infinite;
+}
+
+/* Spectral shift */
+@keyframes spectralShift {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(360deg); }
+}
+
+.performance-fill {
+  animation: shimmer 2s linear infinite, spectralShift 20s linear infinite;
+}
+
+/* Transmission static */
+@keyframes staticFlicker {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.transcript-note {
+  animation: staticFlicker 0.3s infinite;
+}
+
+/* Emergency beacon */
+.emergency-beacon {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  width: 10px;
+  height: 10px;
+  background: var(--accent-danger);
+  border-radius: 50%;
+  box-shadow: 0 0 20px var(--accent-danger);
+  animation: beaconPulse 1s ease-in-out infinite;
+  z-index: 10001;
+  display: none;
+}
+
+.emergency-beacon.active {
+  display: block;
+}
+
+@keyframes beaconPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px var(--accent-danger);
+  }
+  50% {
+    transform: scale(1.5);
+    box-shadow: 0 0 40px var(--accent-danger);
+  }
+}
+
+/* Blood stain effects - subtle horror elements */
+.blood-stain {
+  position: absolute;
+  background: radial-gradient(circle, rgba(139, 58, 58, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  animation: stainAppear 3s ease-in forwards;
+  filter: blur(2px);
+  z-index: 1;
+}
+
+@keyframes stainAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.blood-stain-1 {
+  top: 15%;
+  right: 25%;
+  width: 40px;
+  height: 40px;
+  animation-delay: 30s;
+}
+
+.blood-stain-2 {
+  bottom: 30%;
+  left: 15%;
+  width: 60px;
+  height: 60px;
+  animation-delay: 45s;
+}
+
+.blood-stain-3 {
+  top: 50%;
+  right: 10%;
+  width: 35px;
+  height: 35px;
+  animation-delay: 60s;
+}
+
+/* Corrupted text effect */
+@keyframes textCorrupt {
+  0%, 90%, 100% {
+    text-shadow: 0 0 5px currentColor;
+    transform: translate(0);
+  }
+  92% {
+    text-shadow: 
+      -2px 0 5px rgba(139, 58, 58, 0.8),
+      2px 0 5px rgba(74, 85, 104, 0.8);
+    transform: translate(-2px, 0);
+  }
+  94% {
+    text-shadow: 
+      2px 0 5px rgba(139, 58, 58, 0.8),
+      -2px 0 5px rgba(74, 85, 104, 0.8);
+    transform: translate(2px, 0);
+  }
+}
+
+.corrupted-text {
+  animation: textCorrupt 8s infinite;
+}
+
+/* Audio waveform visualization */
+.audio-wave {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, 
+    transparent,
+    var(--accent-primary),
+    var(--accent-primary),
+    transparent
+  );
+  animation: waveMove 2s ease-in-out infinite;
+  opacity: 0.3;
+}
+
+@keyframes waveMove {
+  0%, 100% {
+    transform: scaleY(1);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scaleY(3);
+    opacity: 0.6;
+  }
+}
+
+/* Distortion waves */
+.distortion-wave {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(139, 58, 58, 0.02) 2px,
+    rgba(139, 58, 58, 0.02) 4px
+  );
+  animation: distortWave 0.3s linear infinite;
+  pointer-events: none;
+  z-index: 9996;
+  opacity: 0;
+}
+
+.distortion-wave.active {
+  opacity: 1;
+}
+
+@keyframes distortWave {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(4px);
+  }
+}
+
+/* VHS tracking lines */
+.vhs-lines {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    rgba(0, 0, 0, 0.1) 1px,
+    transparent 2px,
+    transparent 4px
+  );
+  pointer-events: none;
+  z-index: 9995;
+  animation: vhsTracking 0.5s steps(2) infinite;
+  opacity: 0;
+}
+
+.vhs-lines.active {
+  opacity: 1;
+}
+
+@keyframes vhsTracking {
+  0% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(4px);
+  }
+}
+
+/* Chromatic aberration on stress */
+.chromatic-aberration {
+  animation: chromaticShift 0.2s infinite;
+}
+
+@keyframes chromaticShift {
+  0% {
+    text-shadow: 
+      -1px 0 0 rgba(139, 58, 58, 0.7),
+      1px 0 0 rgba(74, 85, 104, 0.7);
+  }
+  50% {
+    text-shadow: 
+      1px 0 0 rgba(139, 58, 58, 0.7),
+      -1px 0 0 rgba(74, 85, 104, 0.7);
+  }
+  100% {
+    text-shadow: 
+      -1px 0 0 rgba(139, 58, 58, 0.7),
+      1px 0 0 rgba(74, 85, 104, 0.7);
+  }
+}
+
+/* Handprint marks */
+.handprint {
+  position: absolute;
+  width: 80px;
+  height: 100px;
+  background: radial-gradient(ellipse at center, rgba(139, 58, 58, 0.08) 0%, transparent 70%);
+  border-radius: 40% 60% 50% 50%;
+  opacity: 0;
+  animation: handprintFade 5s ease-in forwards;
+  pointer-events: none;
+  filter: blur(1px);
+  z-index: 1;
+}
+
+@keyframes handprintFade {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) rotate(5deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.handprint-1 {
+  top: 20%;
+  left: 5%;
+  transform: rotate(-15deg);
+  animation-delay: 90s;
+}
+
+.handprint-2 {
+  bottom: 25%;
+  right: 8%;
+  transform: rotate(20deg);
+  animation-delay: 120s;
+}
+
+/* Static burst effect */
+@keyframes staticBurst {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+.static-burst {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='2' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10002;
+  mix-blend-mode: overlay;
+}
+
+.static-burst.active {
+  animation: staticBurst 0.2s ease-in-out;
+}
+
+/* Stress indicator - increases over time */
+.stress-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, transparent 0%, rgba(139, 58, 58, 0.05) 100%);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 30s linear;
+}
+
+.stress-overlay.active {
+  opacity: 1;
+}
+
+/* Breathing fog effect */
+.fog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(ellipse at 20% 50%, rgba(74, 85, 104, 0.03) 0%, transparent 40%),
+    radial-gradient(ellipse at 80% 30%, rgba(74, 85, 104, 0.02) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 80%, rgba(74, 85, 104, 0.03) 0%, transparent 40%);
+  pointer-events: none;
+  z-index: 2;
+  animation: fogBreathe 10s ease-in-out infinite;
+}
+
+@keyframes fogBreathe {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
+
+/* Shadowy figure silhouette - very subtle */
+.shadow-figure {
+  position: fixed;
+  width: 200px;
+  height: 400px;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.2) 50%, transparent 100%);
+  filter: blur(20px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1;
+  animation: shadowMove 120s linear infinite;
+}
+
+@keyframes shadowMove {
+  0% {
+    left: -200px;
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.15;
+  }
+  95% {
+    opacity: 0.15;
+  }
+  100% {
+    left: calc(100% + 200px);
+    opacity: 0;
+  }
+}
+
+.shadow-figure-1 {
+  top: 10%;
+  animation-delay: 150s;
+}
+
+.shadow-figure-2 {
+  top: 60%;
+  animation-delay: 200s;
+}
+
+/* Emergency lights flash */
+.emergency-flash {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(139, 58, 58, 0.1);
+  pointer-events: none;
+  z-index: 10003;
+  opacity: 0;
+}
+
+.emergency-flash.active {
+  animation: emergencyFlash 0.5s ease-in-out 3;
+}
+
+@keyframes emergencyFlash {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* Tape scratch marks */
+.scratch-mark {
+  position: absolute;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(to bottom, 
+    transparent 0%,
+    rgba(200, 200, 200, 0.05) 20%,
+    rgba(200, 200, 200, 0.05) 80%,
+    transparent 100%
+  );
+  opacity: 0;
+  animation: scratchAppear 4s ease-in forwards;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes scratchAppear {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.4;
+  }
+}
+
+.scratch-mark-1 {
+  left: 15%;
+  animation-delay: 180s;
+}
+
+.scratch-mark-2 {
+  left: 45%;
+  animation-delay: 240s;
+}
+
+.scratch-mark-3 {
+  right: 20%;
+  animation-delay: 300s;
+}
+
+/* Memory leak visual - screen degradation */
+@keyframes screenDegrade {
+  0% {
+    filter: contrast(1) brightness(1);
+  }
+  100% {
+    filter: contrast(0.98) brightness(0.98);
+  }
+}
+
+.terminal-container.degraded {
+  animation: screenDegrade 180s linear forwards;
+}
+
+/* Call timer turning red */
+.duration-warning {
+  color: #a07070 !important;
+  animation: timerPulse 1s ease-in-out infinite;
+}
+
+@keyframes timerPulse {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(139, 58, 58, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 15px rgba(139, 58, 58, 0.8);
+  }
+}
+
+/* Easter egg - hidden messages */
+.hidden-message {
+  position: fixed;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  color: rgba(139, 58, 58, 0.2);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0;
+  animation: messageFlash 0.1s ease-in;
+  white-space: nowrap;
+}
+
+@keyframes messageFlash {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Protocol corruption */
+.protocol-glitch {
+  animation: protocolCorrupt 10s infinite;
+}
+
+@keyframes protocolCorrupt {
+  0%, 95%, 100% {
+    filter: none;
+    transform: translate(0);
+  }
+  96% {
+    filter: invert(0.1) hue-rotate(10deg);
+    transform: translate(-1px, 1px);
+  }
+  98% {
+    filter: invert(0.1) hue-rotate(-10deg);
+    transform: translate(1px, -1px);
+  }
+}
+
+/* Dispatch button horror state */
+.dispatch-button.horror-state {
+  background: linear-gradient(135deg, #5a3a3a 0%, #4a2a2a 100%);
+  animation: horrorPulse 2s ease-in-out infinite;
+}
+
+@keyframes horrorPulse {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(139, 58, 58, 0.3);
+  }
+  50% {
+    box-shadow: 0 4px 25px rgba(139, 58, 58, 0.6);
+  }
+}
+
+/* Supervisor messages */
+.supervisor-message {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px 24px;
+  max-width: 600px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
+  z-index: 10004;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.supervisor-message.show {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+.supervisor-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.supervisor-icon {
+  font-size: 16px;
+}
+
+.supervisor-text {
+  color: var(--text-primary);
+  font-size: 13px;
+  line-height: 1.6;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Fatigue indicators */
+.fatigue-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.3) 100%);
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+
+.fatigue-overlay.active {
+  opacity: 1;
+}
+
+/* Eye strain effect */
+@keyframes eyeStrain {
+  0%, 100% {
+    filter: blur(0px) brightness(1);
+  }
+  50% {
+    filter: blur(0.3px) brightness(0.97);
+  }
+}
+
+.terminal-container.fatigued {
+  animation: eyeStrain 3s ease-in-out infinite;
+}
+
+/* Peripheral vision darkening */
+.peripheral-dark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(ellipse at center, transparent 0%, transparent 40%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 3s ease;
+}
+
+.peripheral-dark.active {
+  opacity: 1;
+}
+
+/* Time distortion effect */
+@keyframes timeDistort {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.02) rotate(0.5deg);
+  }
+}
+
+.system-time.distorted {
+  animation: timeDistort 2s ease-in-out infinite;
+  color: #a07070;
+}
+
+/* Breathing indicator - player stress */
+.breathing-indicator {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 50px;
+  height: 50px;
+  border: 2px solid rgba(74, 85, 104, 0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  z-index: 10005;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.breathing-indicator.active {
+  opacity: 1;
+  animation: breathingPulse 4s ease-in-out infinite;
+}
+
+@keyframes breathingPulse {
+  0%, 100% {
+    transform: scale(1);
+    border-color: rgba(74, 85, 104, 0.3);
+  }
+  50% {
+    transform: scale(1.15);
+    border-color: rgba(74, 85, 104, 0.6);
+  }
+}
+
+/* Coffee stain */
+.coffee-stain {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(ellipse at center, rgba(122, 106, 62, 0.08) 0%, transparent 70%);
+  border-radius: 50%;
+  opacity: 0;
+  animation: stainAppear 3s ease-in forwards;
+  filter: blur(3px);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.coffee-stain-1 {
+  top: 10%;
+  right: 30%;
+  animation-delay: 200s;
+}
+
+/* Flickering overhead light effect */
+@keyframes lightFlicker {
+  0%, 100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(0.95);
+  }
+}
+
+.terminal-header.flickering {
+  animation: lightFlicker 0.15s infinite;
+}
+
+/* Document corruption */
+.document-corrupt {
+  position: relative;
+}
+
+.document-corrupt::after {
+  content: attr(data-corrupt);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  color: rgba(139, 58, 58, 0.3);
+  animation: corruptFlash 0.1s;
+  pointer-events: none;
+}
+
+@keyframes corruptFlash {
+  0%, 100% {
+    opacity: 0;
+    transform: translate(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(2px, -1px);
+  }
+}
+
+/* Ringing phone visual */
+.phone-ring-indicator {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 12px;
+  height: 12px;
+  background: var(--accent-warning);
+  border-radius: 50%;
+  box-shadow: 0 0 15px var(--accent-warning);
+  animation: phoneRing 0.5s ease-in-out infinite;
+  z-index: 100;
+}
+
+@keyframes phoneRing {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.7;
+  }
+}
+
+/* Screen tear effect */
+.screen-tear {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(139, 58, 58, 0.5);
+  z-index: 10001;
+  opacity: 0;
+  animation: tearMove 2s linear;
+}
+
+@keyframes tearMove {
+  0% {
+    top: 0;
+    opacity: 1;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+/* Warning indicator */
+.warning-pulse {
+  animation: warningFlash 1s ease-in-out infinite;
+}
+
+@keyframes warningFlash {
+  0%, 100% {
+    background: rgba(122, 106, 62, 0.12);
+    border-color: rgba(122, 106, 62, 0.25);
+  }
+  50% {
+    background: rgba(122, 106, 62, 0.2);
+    border-color: rgba(122, 106, 62, 0.4);
+  }
+}
+
+/* Main container */
+.terminal-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  padding: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header/Topbar */
+.terminal-header {
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  position: relative;
+  z-index: 100;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.system-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #3a3a45 0%, #2a2a35 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 0 10px rgba(74, 85, 104, 0.1);
+  animation: pulse-glow 4s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 8px rgba(74, 85, 104, 0.15);
+    filter: brightness(1);
+  }
+  50% { 
+    box-shadow: 0 0 12px rgba(74, 85, 104, 0.25);
+    filter: brightness(1.1);
+  }
+}
+
+.system-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.system-title h1 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: var(--text-primary);
+  text-transform: uppercase;
+}
+
+.system-subtitle {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  margin-top: 2px;
+}
+
+.first-night-badge {
+  background: linear-gradient(135deg, #5a4a35 0%, #4a3a25 100%);
+  border: 1px solid rgba(122, 106, 62, 0.3);
+  color: #a8956f;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 10px rgba(122, 106, 62, 0.15);
+  animation: pulse-badge 3s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 0.95; }
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.system-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-primary);
+  letter-spacing: 1px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.time-icon {
+  font-size: 16px;
+  opacity: 0.5;
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(58, 90, 74, 0.08);
+  border: 1px solid rgba(58, 90, 74, 0.2);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3a5a4a;
+  box-shadow: 0 0 8px rgba(58, 90, 74, 0.4);
+  animation: pulse-status 3s ease-in-out infinite;
+}
+
+@keyframes pulse-status {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.9); }
+}
+
+/* Main workspace */
+.terminal-workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(400px, 1fr) 380px;
+  gap: 20px;
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* Left panel */
+.workspace-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow: hidden;
+}
+
+/* Right panel */
+.workspace-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.workspace-right::-webkit-scrollbar {
+  width: 6px;
+}
+
+.workspace-right::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+.workspace-right::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border-radius: 3px;
+}
+
+/* Panel header */
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+.panel-icon {
+  font-size: 16px;
+  opacity: 0.7;
+  animation: iconPulse 3s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.1); opacity: 1; }
+}
+
+/* Units panel */
+.units-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: visible;
+  z-index: 10;
+}
+
+.units-panel::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(74, 85, 104, 0.03) 0%, transparent 70%);
+  animation: rotate 20s linear infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.units-counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--text-secondary);
+  background: rgba(0, 0, 0, 0.3);
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.units-counter span:first-child {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.units-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+  z-index: 5;
+}
+
+/* Unit card */
+.unit-card {
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.2) 100%);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+}
+
+.unit-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(74, 85, 104, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.unit-card:hover::before {
+  left: 100%;
+}
+
+.unit-card:hover {
+  border-color: var(--accent-primary);
+  transform: translateX(4px);
+  box-shadow: -4px 0 15px rgba(74, 85, 104, 0.15);
+}
+
+.unit-card.unit-selected {
+  border-color: var(--accent-primary);
+  background: linear-gradient(135deg, rgba(74, 85, 104, 0.12) 0%, rgba(58, 68, 84, 0.12) 100%);
+  box-shadow: 0 0 20px rgba(74, 85, 104, 0.2), inset 0 0 30px rgba(74, 85, 104, 0.05);
+}
+
+.unit-card.unit-busy {
+  opacity: 0.5;
+  cursor: not-allowed;
+  filter: grayscale(50%);
+}
+
+.unit-card.unit-busy:hover {
+  transform: none;
+  border-color: var(--border-color);
+}
+
+.unit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.unit-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.unit-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  position: relative;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.police-icon {
+  background: linear-gradient(135deg, #2d3a50 0%, #1f2937 100%);
+  border: 1px solid rgba(74, 85, 104, 0.3);
+}
+
+.fire-icon {
+  background: linear-gradient(135deg, #503a2d 0%, #3a2a1f 100%);
+  border: 1px solid rgba(122, 106, 62, 0.3);
+}
+
+.medical-icon {
+  background: linear-gradient(135deg, #4a3a3a 0%, #3a2a2a 100%);
+  border: 1px solid rgba(139, 58, 58, 0.3);
+}
+
+.icon-pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  animation: iconPulseEffect 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.police-icon .icon-pulse {
+  box-shadow: 0 0 0 0 rgba(74, 85, 104, 0.4);
+}
+
+.fire-icon .icon-pulse {
+  box-shadow: 0 0 0 0 rgba(122, 106, 62, 0.4);
+}
+
+.medical-icon .icon-pulse {
+  box-shadow: 0 0 0 0 rgba(139, 58, 58, 0.4);
+}
+
+@keyframes iconPulseEffect {
+  0% {
+    box-shadow: 0 0 0 0 rgba(74, 85, 104, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(74, 85, 104, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(74, 85, 104, 0);
+  }
+}
+
+.unit-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.unit-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.unit-sector {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.unit-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.status-available {
+  background: rgba(58, 90, 74, 0.15);
+  border: 1px solid rgba(58, 90, 74, 0.3);
+  color: #6a8a7a;
+}
+
+.status-busy {
+  background: rgba(139, 58, 58, 0.15);
+  border: 1px solid rgba(139, 58, 58, 0.3);
+  color: #a07070;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+  animation: statusBlink 2s ease-in-out infinite;
+}
+
+@keyframes statusBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.unit-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(74, 85, 104, 0.1);
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+}
+
+.stat-label {
+  color: var(--text-muted);
+}
+
+.stat-value {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Dispatch panel */
+.dispatch-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+}
+
+.priority-selector {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.priority-button {
+  padding: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.priority-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(74, 85, 104, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+}
+
+.priority-button:hover::before {
+  width: 100%;
+  height: 100%;
+}
+
+.priority-button:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.priority-button.active {
+  border-color: var(--accent-primary);
+  background: rgba(74, 85, 104, 0.12);
+  color: var(--text-primary);
+  box-shadow: 0 0 15px rgba(74, 85, 104, 0.2);
+}
+
+.priority-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  margin: 0 auto 6px;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.dispatch-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.dispatch-button {
+  padding: 16px 20px;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.dispatch-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s ease, height 0.6s ease;
+}
+
+.dispatch-button:active::before {
+  width: 300px;
+  height: 300px;
+}
+
+.primary-action {
+  background: linear-gradient(135deg, #4a5a65 0%, #3a4a55 100%);
+  border: 1px solid rgba(74, 85, 104, 0.5);
+  color: var(--text-primary);
+  box-shadow: 0 4px 15px rgba(74, 85, 104, 0.3);
+}
+
+.primary-action:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(74, 85, 104, 0.4);
+}
+
+.secondary-action {
+  background: linear-gradient(135deg, #5a3a3a 0%, #4a2a2a 100%);
+  border: 1px solid rgba(139, 58, 58, 0.5);
+  color: var(--text-primary);
+  box-shadow: 0 4px 15px rgba(139, 58, 58, 0.3);
+}
+
+.secondary-action:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 25px rgba(139, 58, 58, 0.4);
+}
+
+.button-icon {
+  font-size: 16px;
+}
+
+.button-glow {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  animation: buttonGlow 3s ease-in-out infinite;
+}
+
+@keyframes buttonGlow {
+  0% { left: -100%; }
+  100% { left: 200%; }
+}
+
+.resource-monitor {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.resource-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.resource-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(74, 85, 104, 0.1);
+}
+
+.resource-label {
+  color: var(--text-muted);
+}
+
+.resource-value {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Stats panel */
+.stats-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+}
+
+.stats-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(74, 85, 104, 0.1);
+  font-size: 12px;
+}
+
+.stat-name {
+  color: var(--text-muted);
+}
+
+.stat-data {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.performance-bar-container {
+  margin-top: 12px;
+}
+
+.performance-bar {
+  width: 100%;
+  height: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.performance-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4a5568 0%, #5a6578 50%, #4a5568 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+  border-radius: 5px;
+  position: relative;
+  box-shadow: 0 0 10px rgba(74, 85, 104, 0.4);
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.performance-shimmer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  animation: shimmerMove 2s ease-in-out infinite;
+}
+
+@keyframes shimmerMove {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Notifications */
+.notification-container {
+  position: fixed;
+  top: 80px;
+  right: 24px;
+  z-index: 5000;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.notification {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 14px 18px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 320px;
+  max-width: 400px;
+  opacity: 0;
+  transform: translateX(400px);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+  overflow: hidden;
+  pointer-events: all;
+}
+
+.notification.show {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.notification::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: currentColor;
+}
+
+.notification-info::before {
+  background: var(--accent-primary);
+}
+
+.notification-success::before {
+  background: var(--accent-success);
+}
+
+.notification-warning::before {
+  background: var(--accent-warning);
+}
+
+.notification-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.notification-message {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
+.notification-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: rgba(74, 85, 104, 0.3);
+  transform-origin: left;
+  animation: notificationProgress 4s linear;
+}
+
+@keyframes notificationProgress {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-container {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 32px;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  animation: modalSlide 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes modalSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.modal-icon {
+  font-size: 48px;
+  animation: iconBounce 2s ease-in-out infinite;
+}
+
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.modal-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.modal-body {
+  color: var(--text-primary);
+  line-height: 1.7;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.dispatch-list {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 12px;
+  margin: 16px 0;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.dispatch-item {
+  padding: 4px 0;
+  color: var(--text-primary);
+}
+
+.modal-warning {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-style: italic;
+  margin-top: 12px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+.modal-button {
+  padding: 14px 28px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.confirm-button {
+  background: linear-gradient(135deg, #4a5a65 0%, #3a4a55 100%);
+  color: var(--text-primary);
+}
+
+.confirm-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 85, 104, 0.4);
+}
+
+.cancel-button {
+  background: rgba(0, 0, 0, 0.3);
+  color: var(--text-secondary);
+}
+
+.cancel-button:hover {
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+}
+
+/* Call display panel */
+.call-display-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+  min-height: 280px;
+}
+
+.call-display-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 0%, rgba(74, 85, 104, 0.02) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.call-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.call-id-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.call-id-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+}
+
+.call-id-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: #7a7a85;
+  text-shadow: 0 0 8px rgba(122, 122, 133, 0.2);
+}
+
+.call-priority-badge {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.priority-routine {
+  background: linear-gradient(135deg, rgba(74, 85, 104, 0.12) 0%, rgba(58, 68, 84, 0.12) 100%);
+  border: 1px solid rgba(74, 85, 104, 0.25);
+  color: #8a8a95;
+}
+
+.priority-urgent {
+  background: linear-gradient(135deg, rgba(122, 106, 62, 0.12) 0%, rgba(102, 86, 42, 0.12) 100%);
+  border: 1px solid rgba(122, 106, 62, 0.25);
+  color: #9a8a6a;
+}
+
+.priority-critical {
+  background: linear-gradient(135deg, rgba(139, 58, 58, 0.12) 0%, rgba(119, 38, 38, 0.12) 100%);
+  border: 1px solid rgba(139, 58, 58, 0.25);
+  color: #a07070;
+  animation: pulse-critical 2s ease-in-out infinite;
+}
+
+@keyframes pulse-critical {
+  0%, 100% { box-shadow: 0 0 8px rgba(139, 58, 58, 0.2); }
+  50% { box-shadow: 0 0 14px rgba(139, 58, 58, 0.3); }
+}
+
+/* Call transcript */
+.call-transcript-container {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(74, 85, 104, 0.08);
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  max-height: 140px;
+  overflow-y: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  color: var(--text-primary);
+}
+
+.call-transcript-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.call-transcript-container::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 3px;
+}
+
+.call-transcript-container::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border-radius: 3px;
+}
+
+.transcript-line {
+  margin-bottom: 8px;
+  opacity: 0;
+  animation: fadeInText 0.5s ease forwards;
+}
+
+.transcript-line:nth-child(1) { animation-delay: 0.1s; }
+.transcript-line:nth-child(2) { animation-delay: 0.3s; }
+.transcript-line:nth-child(3) { animation-delay: 0.5s; }
+.transcript-line:nth-child(4) { animation-delay: 0.7s; }
+.transcript-line:nth-child(5) { animation-delay: 0.9s; }
+
+@keyframes fadeInText {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.transcript-note {
+  color: var(--text-muted);
+  font-style: italic;
+  opacity: 0.6;
+}
+
+/* Call metadata grid */
+.call-metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.metadata-card {
+  background: linear-gradient(135deg, rgba(74, 85, 104, 0.04) 0%, rgba(58, 68, 84, 0.04) 100%);
+  border: 1px solid rgba(74, 85, 104, 0.12);
+  border-left: 2px solid var(--accent-primary);
+  border-radius: 6px;
+  padding: 12px;
+  transition: all 0.3s ease;
+}
+
+.metadata-card:hover {
+  border-left-width: 3px;
+  background: linear-gradient(135deg, rgba(74, 85, 104, 0.06) 0%, rgba(58, 68, 84, 0.06) 100%);
+  transform: translateX(2px);
+}
+
+.metadata-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.metadata-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Database panel */
+.database-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-navigation {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 2px;
+}
+
+.nav-tab {
+  padding: 10px 18px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border-radius: 6px 6px 0 0;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.nav-tab:hover {
+  color: var(--text-secondary);
+  background: rgba(74, 85, 104, 0.05);
+}
+
+.nav-tab.active {
+  color: var(--text-primary);
+  background: rgba(74, 85, 104, 0.08);
+}
+
+.nav-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent-primary);
+  box-shadow: 0 0 8px rgba(74, 85, 104, 0.3);
+}
+
+.tab-panel {
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.tab-panel.active {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tab-panel::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.tab-panel::-webkit-scrollbar-thumb {
+  background: var(--accent-primary);
+  border-radius: 4px;
+}
+
+/* Search box */
+.search-container {
+  margin-bottom: 16px;
+}
+
+.search-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 12px 16px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  background: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 10px rgba(74, 85, 104, 0.15);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.6;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  color: var(--text-muted);
+  padding: 60px 20px;
+  font-size: 13px;
+}
+
+.empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.2;
+  filter: grayscale(100%);
+}
+
+.empty-title {
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: 0.5px;
+}
+
+.empty-description {
+  font-size: 12px;
+  opacity: 0.7;
+  line-height: 1.6;
+}
+
+/* Protocol/Result cards */
+.info-card {
+  background: rgba(0, 0, 0, 0.3);
+  border-left: 3px solid var(--accent-primary);
+  border-radius: 6px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover {
+  background: rgba(0, 0, 0, 0.4);
+  transform: translateX(2px);
+  border-left-width: 4px;
+}
+
+.info-card-header {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.info-card-content {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--text-primary);
+}
+
+.protocol-section {
+  margin-bottom: 16px;
+}
+
+.protocol-title {
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+</style>
+</head>
+<body>
+
+<!-- Floating particles -->
+<div class="particles">
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+  <div class="particle"></div>
+</div>
+
+<!-- CRT overlay -->
+<div class="crt-overlay"></div>
+
+<!-- Digital noise -->
+<div class="digital-noise"></div>
+
+<!-- Matrix rain background -->
+<div class="matrix-rain" id="matrixRain"></div>
+
+<!-- Emergency beacon (hidden by default) -->
+<div class="emergency-beacon" id="emergencyBeacon"></div>
+
+<!-- Horror atmosphere layers -->
+<div class="stress-overlay" id="stressOverlay"></div>
+<div class="fog-overlay"></div>
+<div class="shadow-figure shadow-figure-1"></div>
+<div class="shadow-figure shadow-figure-2"></div>
+<div class="distortion-wave" id="distortionWave"></div>
+<div class="vhs-lines" id="vhsLines"></div>
+<div class="static-burst" id="staticBurst"></div>
+<div class="emergency-flash" id="emergencyFlash"></div>
+<div class="fatigue-overlay" id="fatigueOverlay"></div>
+<div class="peripheral-dark" id="peripheralDark"></div>
+
+<!-- Breathing indicator -->
+<div class="breathing-indicator" id="breathingIndicator">💨</div>
+
+<!-- Supervisor messages -->
+<div class="supervisor-message" id="supervisorMessage">
+  <div class="supervisor-header">
+    <span class="supervisor-icon">📻</span>
+    <span>Supervisor - Dispatch Control</span>
+  </div>
+  <div class="supervisor-text" id="supervisorText"></div>
+</div>
+
+<div class="terminal-container hologram-effect" id="terminalContainer">
+  
+  <!-- Header -->
+  <div class="terminal-header">
+    <div class="header-left">
+      <div class="system-logo">
+        <div class="logo-icon">🚨</div>
+        <div class="system-title">
+          <h1>NightShift911 Dispatch</h1>
+          <div class="system-subtitle">Emergency Response Terminal v2.8</div>
+        </div>
+      </div>
+      <div class="first-night-badge">FIRST NIGHT SHIFT</div>
+    </div>
+    
+    <div class="header-right">
+      <div class="system-time">
+        <span class="time-icon">🕐</span>
+        <span id="clock">00:12:43 AM</span>
+      </div>
+      <div class="system-status">
+        <div class="status-indicator"></div>
+        <span>SYSTEM ONLINE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main workspace -->
+  <div class="terminal-workspace">
+    
+    <!-- Left panel -->
+    <div class="workspace-left">
+      
+      <!-- Call display -->
+      <div class="call-display-panel">
+        <div class="circuit-pattern"></div>
+        <div class="data-stream"></div>
+        <div class="audio-wave"></div>
+        <div class="blood-stain blood-stain-1"></div>
+        <div class="blood-stain blood-stain-2"></div>
+        <div class="scratch-mark scratch-mark-1"></div>
+        <div class="call-header-row">
+          <div class="call-id-display">
+            <span class="call-id-label">CALL ID:</span>
+            <span class="call-id-number">#0001</span>
+          </div>
+          <div class="call-priority-badge priority-routine">
+            <span>⚡</span>
+            <span>ROUTINE</span>
+          </div>
+        </div>
+
+        <div class="call-transcript-container">
+          <div class="transcript-line">Hello? Is this 911?</div>
+          <div class="transcript-line">Yeah, uh... my lights keep flickering.</div>
+          <div class="transcript-line">It's been happening for like 20 minutes now.</div>
+          <div class="transcript-line">I don't know... maybe it's the breaker?</div>
+          <div class="transcript-line">Can you send someone to check it out?</div>
+          <div class="transcript-line transcript-note">[Caller sounds calm, no apparent distress]</div>
+        </div>
+
+        <div class="call-metadata-grid">
+          <div class="metadata-card">
+            <div class="metadata-label">Address</div>
+            <div class="metadata-value">142 Maple Street</div>
+          </div>
+          <div class="metadata-card">
+            <div class="metadata-label">District</div>
+            <div class="metadata-value">West - Zone 1</div>
+          </div>
+          <div class="metadata-card">
+            <div class="metadata-label">Caller Profile</div>
+            <div class="metadata-value">Male, 35-45 yrs</div>
+          </div>
+          <div class="metadata-card">
+            <div class="metadata-label">Call Duration</div>
+            <div class="metadata-value" id="duration">00:18</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Database panel -->
+      <div class="database-panel protocol-glitch">
+        <div class="handprint handprint-1"></div>
+        <div class="scratch-mark scratch-mark-2"></div>
+        <div class="coffee-stain coffee-stain-1"></div>
+        <div class="tab-navigation">
+          <button class="nav-tab active" onclick="switchTab(event, 'history')">
+            📂 History
+          </button>
+          <button class="nav-tab" onclick="switchTab(event, 'protocols')">
+            📋 Protocols
+          </button>
+          <button class="nav-tab" onclick="switchTab(event, 'notes')">
+            📝 Notes
+          </button>
+        </div>
+
+        <!-- History Tab -->
+        <div class="tab-panel active" id="history">
+          <div class="search-container">
+            <input type="text" class="search-input" placeholder="Search address history..." value="142 maple street">
+          </div>
+          
+          <div class="empty-state">
+            <div class="empty-icon">📭</div>
+            <div class="empty-title">NO PREVIOUS CALLS FOUND</div>
+            <div class="empty-description">
+              This is the first time this address<br>
+              has contacted emergency services.
+            </div>
+          </div>
+        </div>
+
+        <!-- Protocols Tab -->
+        <div class="tab-panel" id="protocols">
+          <div class="protocol-section">
+            <div class="protocol-title">Electrical Issue Protocol</div>
+            
+            <div class="info-card">
+              <div class="info-card-content">
+                1. Verify if immediate danger (fire, smoke)<br>
+                2. If no danger: Refer to utility company<br>
+                3. Advise caller to avoid electrical panel<br>
+                4. Optional: Dispatch fire unit for inspection<br>
+                5. Response time: Non-urgent
+              </div>
+            </div>
+
+            <div class="info-card" style="border-left-color: #3a5a4a;">
+              <div class="info-card-header">ℹ️ DISPATCHER NOTE</div>
+              <div class="info-card-content">
+                Most electrical flickering is a utility issue.<br>
+                Unless there are signs of fire or emergency,<br>
+                direct caller to power company: 1-800-555-POWER
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notes Tab -->
+        <div class="tab-panel" id="notes">
+          <div class="empty-state">
+            <div class="empty-icon">📝</div>
+            <div class="empty-title">NO NOTES AVAILABLE</div>
+            <div class="empty-description">
+              No operator notes for this address.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right panel -->
+    <div class="workspace-right">
+
+      <!-- Units panel -->
+      <div class="units-panel hologram-effect">
+        <div class="circuit-pattern"></div>
+        <div class="blood-stain blood-stain-3"></div>
+        <div class="handprint handprint-2"></div>
+        <div class="scratch-mark scratch-mark-3"></div>
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="panel-icon">🚨</span>
+            <span>Available Units</span>
+          </div>
+          <div class="units-counter">
+            <span id="availableCount">4</span>/<span>4</span>
+          </div>
+        </div>
+
+        <div class="units-list">
+          <!-- Police units -->
+          <div class="unit-card" data-unit="POLICE-1" onclick="toggleUnit(this)">
+            <div class="unit-header">
+              <div class="unit-info">
+                <div class="unit-icon police-icon">
+                  <span>🚔</span>
+                  <div class="icon-pulse"></div>
+                  <div class="radar-ping"></div>
+                </div>
+                <div class="unit-details">
+                  <div class="unit-name">POLICE-1</div>
+                  <div class="unit-sector">West Sector Patrol</div>
+                </div>
+              </div>
+              <div class="unit-status status-available">
+                <div class="status-dot"></div>
+                <span>Available</span>
+              </div>
+            </div>
+            <div class="unit-stats">
+              <div class="stat-item">
+                <span class="stat-label">ETA:</span>
+                <span class="stat-value">~8 min</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Last call:</span>
+                <span class="stat-value">2h ago</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="unit-card" data-unit="POLICE-2" onclick="toggleUnit(this)">
+            <div class="unit-header">
+              <div class="unit-info">
+                <div class="unit-icon police-icon">
+                  <span>🚔</span>
+                  <div class="icon-pulse"></div>
+                </div>
+                <div class="unit-details">
+                  <div class="unit-name">POLICE-2</div>
+                  <div class="unit-sector">Downtown Patrol</div>
+                </div>
+              </div>
+              <div class="unit-status status-available">
+                <div class="status-dot"></div>
+                <span>Available</span>
+              </div>
+            </div>
+            <div class="unit-stats">
+              <div class="stat-item">
+                <span class="stat-label">ETA:</span>
+                <span class="stat-value">~12 min</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Last call:</span>
+                <span class="stat-value">45m ago</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fire unit -->
+          <div class="unit-card" data-unit="FIRE-1" onclick="toggleUnit(this)">
+            <div class="unit-header">
+              <div class="unit-info">
+                <div class="unit-icon fire-icon">
+                  <span>🚒</span>
+                  <div class="icon-pulse"></div>
+                </div>
+                <div class="unit-details">
+                  <div class="unit-name">FIRE-1</div>
+                  <div class="unit-sector">Station West</div>
+                </div>
+              </div>
+              <div class="unit-status status-available">
+                <div class="status-dot"></div>
+                <span>Available</span>
+              </div>
+            </div>
+            <div class="unit-stats">
+              <div class="stat-item">
+                <span class="stat-label">ETA:</span>
+                <span class="stat-value">~6 min</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Last call:</span>
+                <span class="stat-value">3h ago</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medical unit -->
+          <div class="unit-card" data-unit="MEDIC-1" onclick="toggleUnit(this)">
+            <div class="unit-header">
+              <div class="unit-info">
+                <div class="unit-icon medical-icon">
+                  <span>🚑</span>
+                  <div class="icon-pulse"></div>
+                </div>
+                <div class="unit-details">
+                  <div class="unit-name">MEDIC-1</div>
+                  <div class="unit-sector">General Hospital</div>
+                </div>
+              </div>
+              <div class="unit-status status-available">
+                <div class="status-dot"></div>
+                <span>Available</span>
+              </div>
+            </div>
+            <div class="unit-stats">
+              <div class="stat-item">
+                <span class="stat-label">ETA:</span>
+                <span class="stat-value">~10 min</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Last call:</span>
+                <span class="stat-value">1h ago</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dispatch panel -->
+      <div class="dispatch-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="panel-icon">⚡</span>
+            <span>Dispatch Control</span>
+          </div>
+        </div>
+
+        <div class="priority-selector">
+          <button class="priority-button active" data-priority="routine" onclick="selectPriority(this)">
+            <div class="priority-indicator"></div>
+            <span>Routine</span>
+          </button>
+          <button class="priority-button" data-priority="urgent" onclick="selectPriority(this)">
+            <div class="priority-indicator"></div>
+            <span>Urgent</span>
+          </button>
+          <button class="priority-button" data-priority="critical" onclick="selectPriority(this)">
+            <div class="priority-indicator"></div>
+            <span>Critical</span>
+          </button>
+        </div>
+
+        <div class="dispatch-actions">
+          <button class="dispatch-button primary-action" onclick="dispatchUnits()">
+            <span class="button-icon">✓</span>
+            <span class="button-text">Dispatch Selected Units</span>
+            <div class="button-glow"></div>
+          </button>
+          
+          <button class="dispatch-button secondary-action" onclick="closeCall()">
+            <span class="button-icon">✕</span>
+            <span class="button-text">Close Without Action</span>
+            <div class="button-glow"></div>
+          </button>
+        </div>
+
+        <div class="resource-monitor">
+          <div class="resource-title">Resource Availability</div>
+          <div class="resource-grid">
+            <div class="resource-item">
+              <span class="resource-label">Selected:</span>
+              <span class="resource-value" id="selectedUnits">0</span>
+            </div>
+            <div class="resource-item">
+              <span class="resource-label">Police:</span>
+              <span class="resource-value" id="policeCount">2/2</span>
+            </div>
+            <div class="resource-item">
+              <span class="resource-label">Fire:</span>
+              <span class="resource-value" id="fireCount">1/1</span>
+            </div>
+            <div class="resource-item">
+              <span class="resource-label">Medical:</span>
+              <span class="resource-value" id="medicalCount">1/1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Performance stats -->
+      <div class="stats-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="panel-icon">📊</span>
+            <span>Shift Performance</span>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-row">
+            <span class="stat-name">Calls Handled</span>
+            <span class="stat-data">0/12</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Success Rate</span>
+            <span class="stat-data">—</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Avg Response</span>
+            <span class="stat-data">—</span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Performance</span>
+            <span class="stat-data">100%</span>
+          </div>
+        </div>
+
+        <div class="performance-bar-container">
+          <div class="performance-bar">
+            <div class="performance-fill" style="width: 100%">
+              <div class="performance-shimmer"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<!-- Notification container -->
+<div class="notification-container" id="notifications"></div>
+
+<!-- Modal -->
+<div class="modal-overlay" id="dispatchModal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <div class="modal-icon">⚠️</div>
+      <h2 class="modal-title">Dispatch Confirmation</h2>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <p>You are about to dispatch the following units:</p>
+      <div class="dispatch-list" id="dispatchList"></div>
+      <p>Priority: <strong id="modalPriority">ROUTINE</strong></p>
+      <p class="modal-warning">This will occupy these units for approximately 15-30 minutes.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-button confirm-button" onclick="confirmDispatch()">
+        <span>Confirm Dispatch</span>
+        <div class="button-glow"></div>
+      </button>
+      <button class="modal-button cancel-button" onclick="closeModal()">
+        <span>Cancel</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+let selectedUnits = [];
+let currentPriority = 'routine';
+
+// Clock update
+function updateClock() {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2, '0');
+  const minutes = String(now.getMinutes()).padStart(2, '0');
+  const seconds = String(now.getSeconds()).padStart(2, '0');
+  const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
+  document.getElementById('clock').textContent = `${hours}:${minutes}:${seconds} ${ampm}`;
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+// Call duration counter
+let duration = 18;
+setInterval(() => {
+  duration++;
+  const mins = Math.floor(duration / 60);
+  const secs = duration % 60;
+  document.getElementById('duration').textContent = 
+    `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+}, 1000);
+
+// Tab switching
+function switchTab(event, tabId) {
+  document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.remove('active'));
+  
+  event.target.classList.add('active');
+  document.getElementById(tabId).classList.add('active');
+}
+
+// Unit selection
+function toggleUnit(element) {
+  if (element.classList.contains('unit-busy')) {
+    showNotification('⚠️ This unit is currently on a call', 'warning');
+    return;
+  }
+
+  element.classList.toggle('unit-selected');
+  const unitId = element.dataset.unit;
+  
+  if (element.classList.contains('unit-selected')) {
+    selectedUnits.push(unitId);
+  } else {
+    selectedUnits = selectedUnits.filter(u => u !== unitId);
+  }
+  
+  updateResourceCounts();
+}
+
+// Priority selection
+function selectPriority(element) {
+  document.querySelectorAll('.priority-button').forEach(btn => btn.classList.remove('active'));
+  element.classList.add('active');
+  currentPriority = element.dataset.priority;
+}
+
+// Update resource counts
+function updateResourceCounts() {
+  document.getElementById('selectedUnits').textContent = selectedUnits.length;
+  
+  const police = selectedUnits.filter(u => u.startsWith('POLICE')).length;
+  const fire = selectedUnits.filter(u => u.startsWith('FIRE')).length;
+  const medical = selectedUnits.filter(u => u.startsWith('MEDIC')).length;
+  
+  document.getElementById('policeCount').textContent = `${2 - police}/2`;
+  document.getElementById('fireCount').textContent = `${1 - fire}/1`;
+  document.getElementById('medicalCount').textContent = `${1 - medical}/1`;
+}
+
+// Dispatch units
+function dispatchUnits() {
+  if (selectedUnits.length === 0) {
+    showNotification('⚠️ No units selected', 'warning');
+    return;
+  }
+
+  const listHtml = selectedUnits.map(u => `<div class="dispatch-item">• ${u}</div>`).join('');
+  document.getElementById('dispatchList').innerHTML = listHtml;
+  document.getElementById('modalPriority').textContent = currentPriority.toUpperCase();
+  document.getElementById('dispatchModal').classList.add('active');
+}
+
+// Confirm dispatch
+function confirmDispatch() {
+  closeModal();
+  showNotification('✓ Units dispatched successfully', 'success');
+  
+  selectedUnits.forEach(unitId => {
+    const card = document.querySelector(`[data-unit="${unitId}"]`);
+    card.classList.remove('unit-selected');
+    card.classList.add('unit-busy');
+    card.querySelector('.unit-status').innerHTML = '<div class="status-dot"></div><span>On Call</span>';
+    card.querySelector('.unit-status').className = 'unit-status status-busy';
+  });
+
+  setTimeout(() => showNotification('📻 Units en route to 142 Maple Street...', 'info'), 2000);
+  setTimeout(() => showNotification('📻 Units on scene. Electrical issue confirmed.', 'info'), 5000);
+  
+  selectedUnits = [];
+  updateResourceCounts();
+}
+
+// Close call
+function closeCall() {
+  if (confirm('Are you sure you want to close this call without dispatching units?\n\nRECOMMENDATION: Electrical issues with no emergency signs should be referred to the power company.\n\nThis will save your emergency resources for real emergencies.')) {
+    showNotification('📞 Call closed - Caller referred to utility company', 'success');
+    setTimeout(() => showNotification('✓ Good decision! Resources preserved.', 'success'), 2000);
+    setTimeout(() => showNotification('📞 Next call incoming...', 'info'), 4000);
+  }
+}
+
+// Modal controls
+function closeModal() {
+  document.getElementById('dispatchModal').classList.remove('active');
+}
+
+// Notification system
+function showNotification(message, type = 'info') {
+  const notif = document.createElement('div');
+  notif.className = `notification notification-${type}`;
+  notif.innerHTML = `
+    <div class="notification-icon">${type === 'success' ? '✓' : type === 'warning' ? '⚠️' : 'ℹ️'}</div>
+    <div class="notification-message">${message}</div>
+    <div class="notification-progress"></div>
+  `;
+  
+  document.getElementById('notifications').appendChild(notif);
+  
+  setTimeout(() => notif.classList.add('show'), 10);
+  setTimeout(() => {
+    notif.classList.remove('show');
+    setTimeout(() => notif.remove(), 300);
+  }, 4000);
+}
+
+// Initial tip
+setTimeout(() => {
+  showNotification('💡 TIP: Not all 911 calls require emergency response. Use your judgment wisely!', 'info');
+}, 3000);
+
+// Generate matrix rain effect
+function createMatrixRain() {
+  const container = document.getElementById('matrixRain');
+  const chars = '01アイウエオカキクケコサシスセソタチツテト';
+  
+  for (let i = 0; i < 15; i++) {
+    const column = document.createElement('div');
+    column.className = 'rain-column';
+    column.style.left = `${Math.random() * 100}%`;
+    column.style.animationDuration = `${10 + Math.random() * 10}s`;
+    column.style.animationDelay = `${Math.random() * 5}s`;
+    
+    let text = '';
+    for (let j = 0; j < 20; j++) {
+      text += chars[Math.floor(Math.random() * chars.length)] + '<br>';
+    }
+    column.innerHTML = text;
+    
+    container.appendChild(column);
+  }
+}
+
+createMatrixRain();
+
+// Random glitch effect
+function triggerGlitch() {
+  const elements = document.querySelectorAll('.call-display-panel, .units-panel, .dispatch-panel');
+  const randomElement = elements[Math.floor(Math.random() * elements.length)];
+  
+  randomElement.style.animation = 'none';
+  setTimeout(() => {
+    randomElement.style.animation = 'glitch 5s infinite';
+  }, 10);
+}
+
+setInterval(triggerGlitch, 15000);
+
+// Ambient sound effect (visual feedback)
+function ambientPulse() {
+  const statusDot = document.querySelector('.status-indicator');
+  statusDot.style.animation = 'none';
+  setTimeout(() => {
+    statusDot.style.animation = 'breathe 3s ease-in-out infinite';
+  }, 10);
+}
+
+setInterval(ambientPulse, 8000);
+
+// Screen flicker on critical events
+function screenFlicker() {
+  const container = document.querySelector('.terminal-container');
+  container.style.animation = 'flicker 0.1s 3';
+  setTimeout(() => {
+    container.style.animation = 'flicker 0.15s infinite';
+  }, 300);
+}
+
+// Trigger emergency beacon for critical calls
+function activateEmergencyBeacon() {
+  const beacon = document.getElementById('emergencyBeacon');
+  beacon.classList.add('active');
+  setTimeout(() => {
+    beacon.classList.remove('active');
+  }, 10000);
+}
+
+// Progressive stress system
+let stressLevel = 0;
+function increaseStress() {
+  stressLevel += 1;
+  
+  if (stressLevel > 10) {
+    document.getElementById('stressOverlay').classList.add('active');
+  }
+  
+  if (stressLevel > 20) {
+    document.getElementById('terminalContainer').classList.add('degraded');
+  }
+  
+  if (stressLevel > 30) {
+    // Random distortions
+    if (Math.random() > 0.7) {
+      triggerDistortion();
+    }
+  }
+}
+
+setInterval(increaseStress, 15000); // Stress increases every 15 seconds
+
+// Distortion effect
+function triggerDistortion() {
+  const distortion = document.getElementById('distortionWave');
+  const vhs = document.getElementById('vhsLines');
+  
+  distortion.classList.add('active');
+  vhs.classList.add('active');
+  
+  setTimeout(() => {
+    distortion.classList.remove('active');
+    vhs.classList.remove('active');
+  }, 500);
+}
+
+// Static burst
+function triggerStaticBurst() {
+  const staticBurst = document.getElementById('staticBurst');
+  staticBurst.classList.add('active');
+  
+  setTimeout(() => {
+    staticBurst.classList.remove('active');
+  }, 200);
+}
+
+setInterval(() => {
+  if (Math.random() > 0.85) {
+    triggerStaticBurst();
+  }
+}, 20000);
+
+// Emergency flash for critical situations
+function triggerEmergencyFlash() {
+  const flash = document.getElementById('emergencyFlash');
+  flash.classList.add('active');
+  
+  setTimeout(() => {
+    flash.classList.remove('active');
+  }, 1500);
+}
+
+// Hidden messages easter egg
+const hiddenMessages = [
+  'they never left',
+  'still here',
+  'help us',
+  'dont trust the logs',
+  'check the basement',
+  'it wasnt an accident',
+  'someone is watching',
+  'the calls never stop'
+];
+
+function showHiddenMessage() {
+  if (Math.random() > 0.95 && stressLevel > 15) {
+    const msg = document.createElement('div');
+    msg.className = 'hidden-message';
+    msg.textContent = hiddenMessages[Math.floor(Math.random() * hiddenMessages.length)];
+    msg.style.left = `${Math.random() * 80 + 10}%`;
+    msg.style.top = `${Math.random() * 80 + 10}%`;
+    
+    document.body.appendChild(msg);
+    
+    setTimeout(() => {
+      msg.style.animation = 'messageFlash 0.1s ease-in';
+    }, 10);
+    
+    setTimeout(() => {
+      msg.remove();
+    }, 150);
+  }
+}
+
+setInterval(showHiddenMessage, 5000);
+
+// Call duration warning
+let callDuration = 18;
+setInterval(() => {
+  callDuration++;
+  const durationEl = document.getElementById('duration');
+  const mins = Math.floor(callDuration / 60);
+  const secs = callDuration % 60;
+  durationEl.textContent = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  
+  // Turn red after 5 minutes
+  if (callDuration > 300) {
+    durationEl.classList.add('duration-warning');
+  }
+}, 1000);
+
+// Chromatic aberration on high stress
+function applyChromatic() {
+  if (stressLevel > 25) {
+    const callId = document.querySelector('.call-id-number');
+    callId.classList.add('chromatic-aberration');
+  }
+}
+
+setInterval(applyChromatic, 30000);
+
+// Horror state for dispatch button
+function activateHorrorState() {
+  if (stressLevel > 35 && Math.random() > 0.8) {
+    const dispatchBtn = document.querySelector('.primary-action');
+    dispatchBtn.classList.add('horror-state');
+    
+    setTimeout(() => {
+      dispatchBtn.classList.remove('horror-state');
+    }, 5000);
+  }
+}
+
+setInterval(activateHorrorState, 25000);
+
+// Corrupted text effect on transcripts
+function corruptTranscript() {
+  if (stressLevel > 20 && Math.random() > 0.9) {
+    const lines = document.querySelectorAll('.transcript-line');
+    const randomLine = lines[Math.floor(Math.random() * lines.length)];
+    if (randomLine) {
+      randomLine.classList.add('corrupted-text');
+      setTimeout(() => {
+        randomLine.classList.remove('corrupted-text');
+      }, 3000);
+    }
+  }
+}
+
+setInterval(corruptTranscript, 15000);
+
+// Supervisor messages system
+const supervisorMessages = [
+  "Welcome to your first night shift. Take your time, you'll get used to the rhythm.",
+  "Remember - not every call needs immediate dispatch. Trust your judgment.",
+  "The system logs everything. Keep that in mind.",
+  "If you need anything, I'm here. Well, mostly here. Got other stations to monitor.",
+  "You're doing fine. The first night is always the hardest.",
+  "Don't worry about the old files. Most of that stuff is... outdated.",
+  "Station's been here for 40 years. These walls have seen a lot.",
+  "Coffee machine's broken again. Sorry about that.",
+  "Just focus on the calls. Everything else is just... background noise.",
+  "You'll start noticing things after a few hours. That's normal. Sort of.",
+  "Previous operator left pretty suddenly. But hey, that's the job sometimes.",
+  "Keep an eye on that call timer. Long calls can be... draining.",
+  "The building makes sounds at night. Old pipes, probably.",
+  "Don't go wandering around if you don't have to. Easy to get lost down here.",
+  "Your stats look good. Keep it up."
+];
+
+let messageIndex = 0;
+function showSupervisorMessage() {
+  const msgEl = document.getElementById('supervisorMessage');
+  const textEl = document.getElementById('supervisorText');
+  
+  if (messageIndex < supervisorMessages.length) {
+    textEl.textContent = supervisorMessages[messageIndex];
+    msgEl.classList.add('show');
+    
+    setTimeout(() => {
+      msgEl.classList.remove('show');
+    }, 6000);
+    
+    messageIndex++;
+  }
+}
+
+// Show first message after 5 seconds
+setTimeout(showSupervisorMessage, 5000);
+
+// Show random messages periodically
+setInterval(() => {
+  if (Math.random() > 0.7 && messageIndex < supervisorMessages.length) {
+    showSupervisorMessage();
+  }
+}, 45000);
+
+// Fatigue system
+let fatigueLevel = 0;
+function increaseFatigue() {
+  fatigueLevel += 1;
+  
+  if (fatigueLevel > 15) {
+    document.getElementById('fatigueOverlay').classList.add('active');
+  }
+  
+  if (fatigueLevel > 25) {
+    document.getElementById('peripheralDark').classList.add('active');
+    document.getElementById('terminalContainer').classList.add('fatigued');
+  }
+  
+  if (fatigueLevel > 35) {
+    document.getElementById('breathingIndicator').classList.add('active');
+  }
+  
+  if (fatigueLevel > 40) {
+    const timeEl = document.querySelector('.system-time');
+    timeEl.classList.add('distorted');
+  }
+}
+
+setInterval(increaseFatigue, 20000); // Fatigue increases every 20 seconds
+
+// Screen tear effect
+function triggerScreenTear() {
+  if (fatigueLevel > 30 && Math.random() > 0.9) {
+    const tear = document.createElement('div');
+    tear.className = 'screen-tear';
+    document.body.appendChild(tear);
+    
+    setTimeout(() => {
+      tear.remove();
+    }, 2000);
+  }
+}
+
+setInterval(triggerScreenTear, 15000);
+
+// Light flicker
+function triggerLightFlicker() {
+  if (stressLevel > 25 && Math.random() > 0.85) {
+    const header = document.querySelector('.terminal-header');
+    header.classList.add('flickering');
+    
+    setTimeout(() => {
+      header.classList.remove('flickering');
+    }, 500);
+  }
+}
+
+setInterval(triggerLightFlicker, 30000);
+
+// Phone ring indicator on new call simulation
+function showPhoneRing() {
+  const indicator = document.createElement('div');
+  indicator.className = 'phone-ring-indicator';
+  document.querySelector('.call-display-panel').appendChild(indicator);
+  
+  setTimeout(() => {
+    indicator.remove();
+  }, 3000);
+}
+
+// Random ambient events
+function triggerAmbientEvent() {
+  const events = [
+    () => triggerStaticBurst(),
+    () => triggerDistortion(),
+    () => triggerGlitch(),
+    () => screenFlicker()
+  ];
+  
+  if (stressLevel > 10) {
+    const randomEvent = events[Math.floor(Math.random() * events.length)];
+    randomEvent();
+  }
+}
+
+setInterval(triggerAmbientEvent, 25000);
+
+// Warning pulse on urgent priority
+function updatePriorityVisuals() {
+  const priorityButtons = document.querySelectorAll('.priority-button');
+  priorityButtons.forEach(btn => {
+    if (btn.dataset.priority === 'urgent' && Math.random() > 0.7) {
+      btn.classList.add('warning-pulse');
+      setTimeout(() => {
+        btn.classList.remove('warning-pulse');
+      }, 3000);
+    }
+  });
+}
+
+setInterval(updatePriorityVisuals, 40000);
+
+
+// ============================================
+// CORRECTION ANTI-FLICKER - AJOUTEZ ICI
+// ============================================
+
+// Solution 1: Désactive les animations problématiques
+function disableFlickerEffects() {
+  // Crée un style personnalisé pour désactiver les animations
+  const antiFlickerStyle = document.createElement('style');
+  antiFlickerStyle.textContent = `
+    /* Désactive les animations qui causent le clignotement */
+    .terminal-container {
+      animation: none !important;
+    }
+    
+    .digital-noise {
+      animation: none !important;
+      opacity: 0.05 !important;
+    }
+    
+    .crt-overlay {
+      animation: none !important;
+    }
+    
+    body::after {
+      animation: none !important;
+      opacity: 0.2 !important;
+    }
+    
+    /* Réduit l'intensité des particules */
+    .particle {
+      opacity: 0.1 !important;
+    }
+    
+    /* Stabilise les effets de texte */
+    .call-id-number,
+    .unit-name {
+      animation: none !important;
+    }
+    
+    /* Désactive le pulse sur les boutons */
+    .priority-button[data-priority="critical"].active {
+      animation: none !important;
+    }
+  `;
+  document.head.appendChild(antiFlickerStyle);
+  
+  // Ralentit les animations JavaScript
+  clearInterval(window.glitchInterval);
+  clearInterval(window.ambientInterval);
+  clearInterval(window.messageInterval);
+  clearInterval(window.staticInterval);
+  
+  // Réduit la fréquence des effets
+  window.glitchInterval = setInterval(triggerGlitch, 180000); // 3 minutes
+  window.ambientInterval = setInterval(triggerAmbientEvent, 90000); // 1.5 minutes
+  window.messageInterval = setInterval(showHiddenMessage, 45000); // 45 secondes
+  window.staticInterval = setInterval(() => {
+    if (Math.random() > 0.97) {
+      triggerStaticBurst();
+    }
+  }, 60000); // 1 minute
+}
+
+// Solution 2: Option rapide - désactive tout
+function disableAllFlicker() {
+  // Désactive toutes les animations CSS
+  document.querySelectorAll('*').forEach(el => {
+    el.style.animation = 'none';
+    el.style.animationPlayState = 'paused';
+  });
+  
+  // Désactive les intervalles problématiques
+  const intervals = window.setInterval(() => {}, 9999);
+  for (let i = 0; i < intervals; i++) {
+    window.clearInterval(i);
+  }
+  
+  // Recrée uniquement les intervalles essentiels
+  setTimeout(() => {
+    setInterval(updateClock, 1000);
+    setInterval(showSupervisorMessage, 120000);
+  }, 1000);
+}
+
+// Applique la correction anti-flicker au chargement
+window.addEventListener('load', function() {
+  console.log('Application de la correction anti-flicker...');
+  
+  // Utilise la solution 1 (plus subtile)
+  disableFlickerEffects();
+  
+  // OU utilisez la solution 2 (plus radicale) en décommentant :
+  // disableAllFlicker();
+  
+  // Réduit la fréquence des effets stress/fatigue
+  clearInterval(window.stressInterval);
+  clearInterval(window.fatigueInterval);
+  
+  window.stressInterval = setInterval(increaseStress, 30000); // 30 secondes
+  window.fatigueInterval = setInterval(increaseFatigue, 45000); // 45 secondes
+  
+  console.log('Correction anti-flicker appliquée avec succès');
+});
+
+// Ajoute un bouton de secours pour désactiver les effets
+function addAntiFlickerButton() {
+  const button = document.createElement('button');
+  button.textContent = '📺 Mode stable';
+  button.style.position = 'fixed';
+  button.style.bottom = '20px';
+  button.style.left = '20px';
+  button.style.zIndex = '10000';
+  button.style.padding = '10px 15px';
+  button.style.background = 'var(--bg-secondary)';
+  button.style.color = 'var(--text-primary)';
+  button.style.border = '1px solid var(--border-color)';
+  button.style.borderRadius = '6px';
+  button.style.cursor = 'pointer';
+  button.style.fontFamily = 'JetBrains Mono, monospace';
+  button.style.fontSize = '12px';
+  
+  button.onclick = function() {
+    disableAllFlicker();
+    button.textContent = '✅ Effets désactivés';
+    button.disabled = true;
+    setTimeout(() => button.remove(), 3000);
+  };
+  
+  document.body.appendChild(button);
+}
+
+// Ajoute le bouton après un délai
+setTimeout(addAntiFlickerButton, 5000);
+
+// ============================================
+// FIN DE LA CORRECTION
+// ============================================
+
+// ============================================
+// SUPPRIMER LE GRAIN IMMÉDIATEMENT
+// ============================================
+
+// Solution INSTANTANÉE - s'exécute dès que possible
+(function() {
+    'use strict';
+    
+    // Supprime le grain NUMÉRIQUEMENT
+    const noise = document.querySelector('.digital-noise');
+    if (noise) {
+        noise.style.opacity = '0';
+        noise.style.animation = 'none';
+        noise.style.display = 'none';
+        noise.remove(); // Supprime du DOM
+    }
+    
+    // Supprime aussi l'animation CSS qui cause le flicker
+    const style = document.createElement('style');
+    style.textContent = `
+        .digital-noise { 
+            display: none !important; 
+            opacity: 0 !important; 
+            animation: none !important; 
+        }
+        body::after { 
+            opacity: 0.05 !important; 
+            animation: none !important; 
+        }
+    `;
+    document.head.appendChild(style);
+    
+    console.log("🎯 Grain supprimé IMMÉDIATEMENT");
+})();
+
+// ============================================
+// FIN DU SCRIPT - SUPPRESSION DES FILTRES NOIRS
+// ============================================
+
+// Attendre que tout soit chargé, puis supprimer IMMÉDIATEMENT
+window.addEventListener('load', function() {
+    // Supprime le grain numérique
+    const digitalNoise = document.querySelector('.digital-noise');
+    if (digitalNoise) {
+        digitalNoise.style.opacity = '0';
+        digitalNoise.style.display = 'none';
+        digitalNoise.remove();
+    }
+    
+    // Supprime les autres overlays sombres
+    const darkOverlays = document.querySelectorAll(
+        '.stress-overlay, .fatigue-overlay, .peripheral-dark, .fog-overlay, .crt-overlay'
+    );
+    darkOverlays.forEach(overlay => {
+        overlay.style.display = 'none';
+        overlay.remove();
+    });
+    
+    // Supprime la vignette noire (l'effet de bord sombre)
+    const removeVignette = document.createElement('style');
+    removeVignette.textContent = `
+        /* Supprime le filtre noir principal */
+        body::after {
+            box-shadow: none !important;
+            opacity: 0.05 !important;
+        }
+        
+        /* Éclaircit légèrement l'arrière-plan */
+        body {
+            background: linear-gradient(135deg, #101016 0%, #1b1621 100%) !important;
+        }
+        
+        /* Rend les panneaux plus visibles */
+        .units-panel, .dispatch-panel, .stats-panel, .call-display-panel, .database-panel {
+            background: #1c1c24 !important;
+            border-color: #32323a !important;
+        }
+        
+        /* Améliore la lisibilité du texte */
+        :root {
+            --text-primary: #d8d8e0 !important;
+            --text-secondary: #8e8e96 !important;
+        }
+    `;
+    document.head.appendChild(removeVignette);
+    
+    console.log("✨ Filtres sombres supprimés, interface éclaircie");
+});
+
+// ============================================
+// SUPPRESSION DES ANIMATIONS GÊNANTES
+// ============================================
+
+// Cette fonction s'exécute immédiatement
+(function disableAnnoyingAnimations() {
+    console.log("🚫 Désactivation des animations gênantes...");
+    
+    // 1. SUPPRIME LES ANIMATIONS DES BOUTONS
+    const buttons = document.querySelectorAll(
+        '.dispatch-button, .priority-button, .modal-button, .nav-tab, .unit-card'
+    );
+    buttons.forEach(btn => {
+        btn.style.animation = 'none';
+        btn.style.transition = 'none';
+    });
+    
+    // 2. SUPPRIME LE CLIGNOTEMENT DES CONTAINERS
+    const containers = document.querySelectorAll(
+        '.call-display-panel, .units-panel, .dispatch-panel, .stats-panel, .database-panel'
+    );
+    containers.forEach(container => {
+        container.style.animation = 'none';
+    });
+    
+    // 3. SUPPRIME LES EFFETS DE PULSATION
+    const pulsatingElements = document.querySelectorAll(
+        '.status-indicator, .first-night-badge, .priority-button.active, .logo-icon'
+    );
+    pulsatingElements.forEach(el => {
+        el.style.animation = 'none';
+        el.style.boxShadow = 'none';
+    });
+    
+    // 4. SUPPRIME LES ANIMATIONS DE TEXTE
+    const textElements = document.querySelectorAll(
+        '.call-id-number, .unit-name, .performance-fill, .button-glow'
+    );
+    textElements.forEach(el => {
+        el.style.animation = 'none';
+        el.style.textShadow = 'none';
+    });
+    
+    // 5. SUPPRIME LES GLOWS ET EFFETS LUMINEUX
+    const glowElements = document.querySelectorAll(
+        '.button-glow, .performance-shimmer, .icon-pulse, .radar-ping'
+    );
+    glowElements.forEach(el => {
+        el.style.animation = 'none';
+        el.style.display = 'none';
+    });
+    
+    // 6. CRÉE UN STYLE CSS POUR DÉSACTIVER TOUTES LES ANIMATIONS
+    const noAnimationStyle = document.createElement('style');
+    noAnimationStyle.textContent = `
+        /* DÉSACTIVE TOUTES LES ANIMATIONS CSS */
+        *,
+        *::before,
+        *::after {
+            animation: none !important;
+            animation-duration: 0s !important;
+            animation-iteration-count: 1 !important;
+            transition: none !important;
+            transition-duration: 0s !important;
+        }
+        
+        /* SPÉCIFIQUE AUX BOUTONS */
+        .dispatch-button::before,
+        .dispatch-button::after,
+        .priority-button::before,
+        .priority-button::after {
+            animation: none !important;
+            display: none !important;
+        }
+        
+        /* SUPPRIME LES EFFETS DE SURVOL ANIMÉS */
+        .unit-card:hover::before,
+        .dispatch-button:hover::after {
+            display: none !important;
+            width: 0 !important;
+            height: 0 !important;
+        }
+        
+        /* SUPPRIME LES CLIGNOTEMENTS */
+        .priority-button[data-priority="critical"].active,
+        .duration-warning,
+        .warning-pulse {
+            animation: none !important;
+            box-shadow: none !important;
+        }
+        
+        /* SUPPRIME LES ANIMATIONS DE TEXTE */
+        .call-id-number,
+        .unit-name {
+            animation: none !important;
+            text-shadow: 0 0 3px currentColor !important;
+        }
+        
+        /* STABILISE LES ICÔNES */
+        .panel-icon,
+        .logo-icon,
+        .status-dot {
+            animation: none !important;
+        }
+        
+        /* SUPPRIME LES EFFETS DE CHARGEMENT */
+        .metadata-card,
+        .performance-fill {
+            animation: none !important;
+        }
+        
+        /* SUPPRIME L'EFFET DE TEXTE QUI TAPE */
+        .transcript-line {
+            animation: none !important;
+            opacity: 1 !important;
+        }
+    `;
+    document.head.appendChild(noAnimationStyle);
+    
+    // 7. ARRÊTE TOUS LES INTERVALLES JAVASCRIPT QUI CRÉENT DES ANIMATIONS
+    const intervalIds = window.setInterval(() => {}, 9999);
+    for (let i = 1; i <= intervalIds; i++) {
+        window.clearInterval(i);
+    }
+    
+    // 8. DÉSACTIVE LES FONCTIONS D'ANIMATION DANS LE CODE EXISTANT
+    window.triggerGlitch = function() {};
+    window.triggerStaticBurst = function() {};
+    window.triggerDistortion = function() {};
+    window.corruptTranscript = function() {};
+    window.activateHorrorState = function() {};
+    
+    console.log("✅ Toutes les animations gênantes ont été désactivées !");
+    
+    // 9. AJOUTE UN BOUTON POUR RÉACTIVER (OPTIONNEL)
+    const toggleBtn = document.createElement('button');
+    toggleBtn.textContent = '⏸️ Animations OFF';
+    toggleBtn.style.position = 'fixed';
+    toggleBtn.style.top = '10px';
+    toggleBtn.style.right = '10px';
+    toggleBtn.style.zIndex = '99999';
+    toggleBtn.style.padding = '5px 10px';
+    toggleBtn.style.fontSize = '12px';
+    toggleBtn.style.cursor = 'pointer';
+    toggleBtn.style.background = '#2a2a35';
+    toggleBtn.style.color = '#fff';
+    toggleBtn.style.border = '1px solid #4a5568';
+    toggleBtn.style.borderRadius = '4px';
+    
+    let animationsDisabled = true;
+    toggleBtn.onclick = function() {
+        animationsDisabled = !animationsDisabled;
+        if (animationsDisabled) {
+            toggleBtn.textContent = '⏸️ Animations OFF';
+            noAnimationStyle.disabled = false;
+        } else {
+            toggleBtn.textContent = '▶️ Animations ON';
+            noAnimationStyle.disabled = true;
+        }
+    };
+    
+    document.body.appendChild(toggleBtn);
+})();
+
+// Supprime immédiatement le bouton "animations off"
+(function() {
+    console.log("🔍 Recherche du bouton 'animations off'...");
+    
+    // Méthode 1 : Cherche par texte
+    const allButtons = document.querySelectorAll('button');
+    allButtons.forEach(button => {
+        const buttonText = button.textContent.toLowerCase();
+        if (buttonText.includes('animation') || 
+            buttonText.includes('animations off') ||
+            buttonText.includes('toggle animations')) {
+            console.log("🗑️ Bouton trouvé et supprimé :", button.textContent);
+            button.style.display = 'none';
+            button.remove();
+        }
+    });
+    
+    // Méthode 2 : Cherche dans le header-right
+    const headerRight = document.querySelector('.header-right');
+    if (headerRight) {
+        const headerButtons = headerRight.querySelectorAll('button');
+        if (headerButtons.length > 0) {
+            headerButtons.forEach(btn => {
+                console.log("🗑️ Bouton du header supprimé");
+                btn.style.display = 'none';
+                btn.remove();
+            });
+        }
+    }
+    
+    // Méthode 3 : Supprime le dernier élément du header-right
+    const headerElements = document.querySelectorAll('.header-right > *');
+    if (headerElements.length > 2) { // Il devrait y avoir seulement l'heure et le statut
+        for (let i = 2; i < headerElements.length; i++) {
+            console.log("🗑️ Élément supplémentaire supprimé du header");
+            headerElements[i].style.display = 'none';
+            headerElements[i].remove();
+        }
+    }
+    
+    console.log("✅ Nettoyage terminé");
+})();
+
+// 🎮 VERSION FINALE - TOUT GÉRÉ CÔTÉ HTML
+
+window.dispatchUnits = function() {
+    if (selectedUnits.length === 0) {
+        showNotification('⚠️ No units selected', 'warning');
+        return;
+    }
+    
+    const unitsList = selectedUnits.join(',');
+    
+    // Envoie au Blueprint (juste pour info)
+    if (window.ue && window.ue.game) {
+        window.ue.game.dispatch(unitsList);
+    }
+    
+    // ===== TOUT LE GAMEPLAY ICI =====
+    
+    // Immédiat
+    showNotification('✓ Units dispatched!', 'success');
+    
+    // Après 5 sec
+    setTimeout(function() {
+        showNotification('📻 Units en route to 142 Maple St...', 'info');
+    }, 5000);
+    
+    // Après 30 sec - BAD OUTCOME
+    setTimeout(function() {
+        showNotification('📻 Units arrived - No emergency found', 'info');
+    }, 30000);
+    
+    // Après 35 sec - Superviseur fâché
+    setTimeout(function() {
+        showNotification('⚠️ Supervisor: Why dispatch for flickering lights?', 'warning');
+        
+        // EFFET VISUEL: Lumières flickent
+        const terminal = document.querySelector('.terminal-header');
+        terminal.classList.add('flickering');
+        setTimeout(() => terminal.classList.remove('flickering'), 2000);
+        
+    }, 35000);
+    
+    // Après 40 sec - Call #2 arrive!
+    setTimeout(function() {
+        triggerCall2(); // On va créer cette fonction
+    }, 40000);
+    
+    // Reset UI
+    selectedUnits.forEach(unitId => {
+        const card = document.querySelector('[data-unit="' + unitId + '"]');
+        card.classList.remove('unit-selected');
+        card.classList.add('unit-busy');
+    });
+    selectedUnits = [];
+    updateResourceCounts();
+};
+
+window.closeCall = function() {
+    // Envoie au Blueprint
+    if (window.ue && window.ue.game) {
+        window.ue.game.closecall('closed');
+    }
+    
+    // ===== GAMEPLAY BAD ENDING =====
+    
+    showNotification('Call closed - Referred to utility', 'info');
+    
+    // Après 3 sec - Faux sentiment de sécurité
+    setTimeout(function() {
+        showNotification('✓ Good decision - Following protocol', 'success');
+    }, 3000);
+    
+    // Après 20 sec - LA VÉRITÉ
+    setTimeout(function() {
+        // Notification
+        showNotification('📰 BREAKING NEWS: Electrical fire kills 3 at Maple Street', 'warning');
+        
+        // EFFETS D'HORREUR
+        
+        // 1. Stress overlay
+        document.getElementById('stressOverlay').classList.add('active');
+        
+        // 2. Emergency flash (rouge)
+        const flash = document.getElementById('emergencyFlash');
+        flash.classList.add('active');
+        setTimeout(() => flash.classList.remove('active'), 3000);
+        
+        // 3. Static burst
+        const staticEl = document.getElementById('staticBurst');
+        staticEl.classList.add('active');
+        setTimeout(() => staticEl.classList.remove('active'), 500);
+        
+        // 4. Corruption du texte
+        const callId = document.querySelector('.call-id-number');
+        callId.classList.add('chromatic-aberration');
+        
+        // 5. Message du superviseur (après le choc)
+        setTimeout(function() {
+            const supervisor = document.getElementById('supervisorMessage');
+            const text = document.getElementById('supervisorText');
+            text.textContent = "...Did you see the news? These things happen. You followed protocol. It's... it's not your fault. Keep working.";
+            supervisor.classList.add('show');
+            
+            setTimeout(() => supervisor.classList.remove('show'), 8000);
+        }, 5000);
+        
+        // 6. Après 10 sec - Call #2 arrive (break-in)
+        setTimeout(function() {
+            triggerCall2();
+        }, 10000);
+        
+    }, 20000);
+};
+
+// ===== FONCTION POUR DÉCLENCHER CALL #2 =====
+function triggerCall2() {
+    // Notification
+    showNotification('📞 Incoming call...', 'warning');
+    
+    // Son de téléphone (tu devras jouer le son depuis Blueprint)
+    if (window.ue && window.ue.game) {
+        window.ue.game.phonering(); // Signal pour Blueprint
+    }
+    
+    // Après 5 sec si pas répondu
+    setTimeout(function() {
+        // Auto-update l'interface avec Call #2
+        receiveCall(
+            '0002',
+            '89 Oakwood Drive',
+            'Break-in',
+            'urgent',
+            '<div class="transcript-line">I... I think someone\'s in my house!</div>' +
+            '<div class="transcript-line">I heard glass breaking downstairs...</div>' +
+            '<div class="transcript-line">[Heavy breathing]</div>' +
+            '<div class="transcript-line">Please... send help!</div>' +
+            '<div class="transcript-line transcript-note">[LINE GOES DEAD]</div>'
+        );
+    }, 5000);
+}
+
+</script>
+
+</body>
+</html>
