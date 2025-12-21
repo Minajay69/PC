@@ -4811,37 +4811,6 @@ document.addEventListener('keyup', function(e) {
 });
 </script>
 
-<!-- SUPERVISOR MESSAGE - Repositionné en bas -->
-<div id="supervisorMessage" style="
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: linear-gradient(135deg, #1a1a22 0%, #12121a 100%);
-  border: 2px solid #7a6a3e;
-  border-radius: 8px;
-  padding: 16px 24px;
-  max-width: 600px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
-  z-index: 10010;
-  opacity: 0;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  font-family: 'Inter', sans-serif;
-">
-  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: #9a8a6a; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
-    <span style="font-size: 16px;">📻</span>
-    <span>SUPERVISOR - DISPATCH CONTROL</span>
-  </div>
-  <div id="supervisorText" style="color: #d8d8e0; font-size: 14px; line-height: 1.6;"></div>
-</div>
-
-<style>
-#supervisorMessage.show {
-  transform: translateX(-50%) translateY(0) !important;
-  opacity: 1 !important;
-}
-</style>
-
 <!-- STRESS INDICATOR - Version fixe bien positionnée -->
 <div id="guiltIndicator" style="
   position: fixed;
@@ -4857,43 +4826,53 @@ document.addEventListener('keyup', function(e) {
   font-family: 'JetBrains Mono', monospace;
   z-index: 200;
 ">
+  <!-- Icône + Label -->
   <span style="font-size: 10px; font-weight: 600; color: #7a7a82; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">
     ⚠️ STRESS
   </span>
   
+  <!-- Barre de progression -->
   <div style="width: 120px; height: 8px; background: rgba(0, 0, 0, 0.5); border-radius: 4px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);">
-    <div id="guiltBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%); border-radius: 4px; transition: width 1.5s cubic-bezier(0.4, 0.0, 0.2, 1), background 0.8s ease; box-shadow: 0 0 8px rgba(58, 90, 74, 0.6);"></div>
+    <div id="guiltBar" style="
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%);
+      border-radius: 4px;
+      transition: width 1.5s cubic-bezier(0.4, 0.0, 0.2, 1), background 0.8s ease;
+      box-shadow: 0 0 8px rgba(58, 90, 74, 0.6);
+    "></div>
   </div>
   
-  <span id="guiltPercent" style="font-size: 11px; font-weight: 700; color: #c4c4c8; min-width: 32px; text-align: right;">0%</span>
+  <!-- Pourcentage -->
+  <span id="guiltPercent" style="font-size: 11px; font-weight: 700; color: #c4c4c8; min-width: 32px; text-align: right;">
+    0%
+  </span>
 </div>
 
 <script>
-// ===== SYSTÈME DE STRESS AVEC MESSAGES ET EFFETS =====
+// ... TOUT TON JAVASCRIPT EXISTANT AU-DESSUS ...
+
+// ===== SYSTÈME DE STRESS (VERSION SIMPLE) =====
 let currentStress = 0;
 let targetStress = 0;
 let animationFrameId = null;
 
-const supervisorMessages = {
-  low: ["Quiet night so far. Stay alert.", "Good work. Keep it up.", "Everything under control.", "You're handling this well."],
-  medium: ["Calls are picking up. Stay focused.", "Busy shift. Remember to breathe.", "Lot of activity tonight. Keep your head clear.", "You're doing fine. Hang in there."],
-  high: ["Tough night. Take it one call at a time.", "Heavy load tonight. You got this.", "Don't let the pressure get to you.", "Stay calm. You're trained for this."],
-  critical: ["Only 1 hour left. You can make it.", "Almost done. Push through.", "Shift ends soon. Hang in there.", "You're exhausted. Stay with me."]
-};
-
+// Fonction appelée depuis Blueprint
 window.updateStress = function(newStress) {
   console.log('📊 Blueprint called updateStress:', newStress);
-  const oldThreshold = Math.floor(currentStress / 20);
-  const newThreshold = Math.floor(newStress / 20);
   targetStress = newStress;
   animateStressBar();
-  if (newThreshold > oldThreshold && newStress >= 15) showSupervisorMessage(newStress);
 };
 
+// Animation progressive
 function animateStressBar() {
-  if (animationFrameId) cancelAnimationFrame(animationFrameId);
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
+  
   const animate = () => {
     const diff = targetStress - currentStress;
+    
     if (Math.abs(diff) > 0.1) {
       currentStress += diff * 0.05;
       updateStressDisplay(currentStress);
@@ -4904,16 +4883,24 @@ function animateStressBar() {
       animationFrameId = null;
     }
   };
+  
   animate();
 }
 
+// Met à jour l'affichage
 function updateStressDisplay(stress) {
   const roundedStress = Math.round(stress);
+  
   const percentEl = document.getElementById('guiltPercent');
   const barEl = document.getElementById('guiltBar');
-  if (!percentEl || !barEl) { console.error('❌ Elements not found!'); return; }
+  
+  if (!percentEl || !barEl) {
+    console.error('❌ Elements not found!');
+    return;
+  }
   
   console.log('✅ Display updated:', roundedStress + '%');
+  
   percentEl.textContent = roundedStress + '%';
   barEl.style.width = stress + '%';
   
@@ -4932,26 +4919,20 @@ function updateStressDisplay(stress) {
   }
 }
 
-function showSupervisorMessage(stress) {
-  let pool;
-  if (stress < 30) pool = supervisorMessages.low;
-  else if (stress < 60) pool = supervisorMessages.medium;
-  else if (stress < 85) pool = supervisorMessages.high;
-  else pool = supervisorMessages.critical;
-  
-  const msg = pool[Math.floor(Math.random() * pool.length)];
-  const msgEl = document.getElementById('supervisorMessage');
-  const textEl = document.getElementById('supervisorText');
-  
-  if (msgEl && textEl) {
-    console.log('📻 Supervisor:', msg);
-    textEl.textContent = msg;
-    msgEl.classList.add('show');
-    setTimeout(() => msgEl.classList.remove('show'), 6000);
+// Animation CSS pour le pulse
+const stressStyle = document.createElement('style');
+stressStyle.textContent = `
+  @keyframes guiltPulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(139, 58, 58, 0.9); }
+    50% { box-shadow: 0 0 25px rgba(139, 58, 58, 1); }
   }
-}
+`;
+document.head.appendChild(stressStyle);
 
+// Initialise à 0
 window.updateStress(0);
+// ===== FIN DU SYSTÈME DE STRESS =====
+
 </script>
 </body>
 </html>
