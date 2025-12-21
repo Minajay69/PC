@@ -4850,29 +4850,41 @@ document.addEventListener('keyup', function(e) {
 </div>
 
 <script>
-// ... TOUT TON JAVASCRIPT EXISTANT ICI ...
+// ... TOUT TON JAVASCRIPT EXISTANT AU-DESSUS ...
 
-// ===== SYSTÈME DE STRESS AVEC URL =====
+// ===== SYSTÈME DE STRESS (VERSION SIMPLE) =====
 let currentStress = 0;
 let targetStress = 0;
 let animationFrameId = null;
 
-// Lit le stress depuis l'URL
-function loadStressFromURL() {
-  const urlParams = new URLSearchParams(window.location.search);
-  const stressParam = urlParams.get('stress');
-  
-  console.log('🔍 URL Stress param:', stressParam);
-  
-  if (stressParam !== null) {
-    const stress = parseInt(stressParam);
-    if (!isNaN(stress)) {
-      console.log('✅ Setting stress to:', stress);
-      targetStress = stress;
-      currentStress = stress;
-      updateStressDisplay(stress);
-    }
+// Fonction appelée depuis Blueprint
+window.updateStress = function(newStress) {
+  console.log('📊 Blueprint called updateStress:', newStress);
+  targetStress = newStress;
+  animateStressBar();
+};
+
+// Animation progressive
+function animateStressBar() {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
   }
+  
+  const animate = () => {
+    const diff = targetStress - currentStress;
+    
+    if (Math.abs(diff) > 0.1) {
+      currentStress += diff * 0.05;
+      updateStressDisplay(currentStress);
+      animationFrameId = requestAnimationFrame(animate);
+    } else {
+      currentStress = targetStress;
+      updateStressDisplay(currentStress);
+      animationFrameId = null;
+    }
+  };
+  
+  animate();
 }
 
 // Met à jour l'affichage
@@ -4883,11 +4895,11 @@ function updateStressDisplay(stress) {
   const barEl = document.getElementById('guiltBar');
   
   if (!percentEl || !barEl) {
-    console.error('❌ Stress elements not found!');
+    console.error('❌ Elements not found!');
     return;
   }
   
-  console.log('📊 Updating stress bar to:', roundedStress + '%');
+  console.log('✅ Display updated:', roundedStress + '%');
   
   percentEl.textContent = roundedStress + '%';
   barEl.style.width = stress + '%';
@@ -4917,11 +4929,8 @@ stressStyle.textContent = `
 `;
 document.head.appendChild(stressStyle);
 
-// Charge le stress au démarrage
-window.addEventListener('load', function() {
-  console.log('🚀 Page loaded');
-  loadStressFromURL();
-});
+// Initialise à 0
+window.updateStress(0);
 // ===== FIN DU SYSTÈME DE STRESS =====
 
 </script>
