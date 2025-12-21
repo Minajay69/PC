@@ -2748,13 +2748,35 @@ body::after {
 <div class="breathing-indicator" id="breathingIndicator">💨</div>
 
 <!-- Supervisor messages -->
-<div class="supervisor-message" id="supervisorMessage">
-  <div class="supervisor-header">
-    <span class="supervisor-icon">📻</span>
-    <span>Supervisor - Dispatch Control</span>
+<div id="supervisorMessage" style="
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: linear-gradient(135deg, #1a1a22 0%, #12121a 100%);
+  border: 2px solid #7a6a3e;
+  border-radius: 8px;
+  padding: 16px 24px;
+  max-width: 600px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
+  z-index: 10010;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  font-family: 'Inter', sans-serif;
+">
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: #9a8a6a; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+    <span style="font-size: 16px;">📻</span>
+    <span>SUPERVISOR - DISPATCH CONTROL</span>
   </div>
-  <div class="supervisor-text" id="supervisorText"></div>
+  <div id="supervisorText" style="color: #d8d8e0; font-size: 14px; line-height: 1.6;"></div>
 </div>
+
+<style>
+#supervisorMessage.show {
+  transform: translateX(-50%) translateY(0) !important;
+  opacity: 1 !important;
+}
+</style>
 
 <div class="terminal-container hologram-effect" id="terminalContainer">
   
@@ -4993,14 +5015,19 @@ function showSupervisorMessage(stress) {
 
 // Applique les effets visuels selon le stress
 function applyStressEffects(stress) {
+  console.log('🎨 Applying stress effects for level:', stress);
+  
   // Stress léger (30+) - Overlay subtil
   const stressOverlay = document.getElementById('stressOverlay');
   if (stressOverlay) {
     if (stress >= 30) {
       stressOverlay.classList.add('active');
+      console.log('✅ Stress overlay ON');
     } else {
       stressOverlay.classList.remove('active');
     }
+  } else {
+    console.warn('⚠️ stressOverlay not found');
   }
   
   // Stress moyen (50+) - Fatigue
@@ -5008,44 +5035,62 @@ function applyStressEffects(stress) {
   if (fatigueOverlay) {
     if (stress >= 50) {
       fatigueOverlay.classList.add('active');
+      console.log('✅ Fatigue overlay ON');
     } else {
       fatigueOverlay.classList.remove('active');
     }
+  } else {
+    console.warn('⚠️ fatigueOverlay not found');
   }
   
   // Stress élevé (70+) - Vision périphérique
   const peripheralDark = document.getElementById('peripheralDark');
   const terminalContainer = document.getElementById('terminalContainer');
   
-  if (peripheralDark && terminalContainer) {
-    if (stress >= 70) {
+  if (stress >= 70) {
+    if (peripheralDark) {
       peripheralDark.classList.add('active');
-      terminalContainer.classList.add('fatigued');
-    } else {
-      peripheralDark.classList.remove('active');
-      terminalContainer.classList.remove('fatigued');
+      console.log('✅ Peripheral dark ON');
     }
+    if (terminalContainer) {
+      terminalContainer.classList.add('fatigued');
+      console.log('✅ Terminal fatigued ON');
+    }
+  } else {
+    if (peripheralDark) peripheralDark.classList.remove('active');
+    if (terminalContainer) terminalContainer.classList.remove('fatigued');
   }
   
   // Stress critique (85+) - Indicateur de respiration
   const breathingIndicator = document.getElementById('breathingIndicator');
-  if (breathingIndicator) {
-    if (stress >= 85) {
+  if (stress >= 85) {
+    if (breathingIndicator) {
       breathingIndicator.classList.add('active');
-      
-      // Glitch aléatoire
-      if (Math.random() > 0.7) {
-        triggerStaticBurst();
-      }
-    } else {
-      breathingIndicator.classList.remove('active');
+      console.log('✅ Breathing indicator ON');
     }
+    
+    // Glitch aléatoire
+    if (Math.random() > 0.7) {
+      console.log('⚡ Triggering static burst');
+      const staticBurst = document.getElementById('staticBurst');
+      if (staticBurst) {
+        staticBurst.classList.add('active');
+        setTimeout(() => staticBurst.classList.remove('active'), 200);
+      }
+    }
+  } else {
+    if (breathingIndicator) breathingIndicator.classList.remove('active');
   }
   
   // Stress maximum (95+) - Distorsions
   if (stress >= 95) {
     if (Math.random() > 0.8) {
-      triggerDistortion();
+      console.log('⚡ Triggering distortion');
+      const distortionWave = document.getElementById('distortionWave');
+      if (distortionWave) {
+        distortionWave.classList.add('active');
+        setTimeout(() => distortionWave.classList.remove('active'), 500);
+      }
     }
   }
 }
