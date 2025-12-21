@@ -4852,16 +4852,54 @@ document.addEventListener('keyup', function(e) {
 <script>
 // ... TOUT TON JAVASCRIPT EXISTANT AU-DESSUS ...
 
-// ===== SYSTÈME DE STRESS (VERSION SIMPLE) =====
+// ===== SYSTÈME DE STRESS AVEC MESSAGES ET EFFETS =====
 let currentStress = 0;
 let targetStress = 0;
 let animationFrameId = null;
 
+// Messages du superviseur selon le niveau de stress
+const supervisorMessages = {
+  low: [  // 0-30
+    "Quiet night so far. Stay alert.",
+    "Good work. Keep it up.",
+    "Everything under control.",
+    "You're handling this well."
+  ],
+  medium: [ // 30-60
+    "Calls are picking up. Stay focused.",
+    "Busy shift. Remember to breathe.",
+    "Lot of activity tonight. Keep your head clear.",
+    "You're doing fine. Hang in there."
+  ],
+  high: [ // 60-85
+    "Tough night. Take it one call at a time.",
+    "Heavy load tonight. You got this.",
+    "Don't let the pressure get to you.",
+    "Stay calm. You're trained for this."
+  ],
+  critical: [ // 85-100
+    "Only 1 hour left. You can make it.",
+    "Almost done. Push through.",
+    "Shift ends soon. Hang in there.",
+    "You're exhausted. Stay with me."
+  ]
+};
+
 // Fonction appelée depuis Blueprint
 window.updateStress = function(newStress) {
   console.log('📊 Blueprint called updateStress:', newStress);
+  
+  // Message uniquement si le stress franchit un seuil de 20
+  const oldThreshold = Math.floor(currentStress / 20);
+  const newThreshold = Math.floor(newStress / 20);
+  
   targetStress = newStress;
   animateStressBar();
+  
+  // Affiche message si on change de seuil
+  if (newThreshold > oldThreshold && newStress >= 15) {
+    showSupervisorMessage(newStress);
+  }
 };
 
 // Animation progressive
@@ -4904,6 +4942,7 @@ function updateStressDisplay(stress) {
   percentEl.textContent = roundedStress + '%';
   barEl.style.width = stress + '%';
   
+  // Couleurs selon le niveau
   if (stress < 25) {
     barEl.style.background = 'linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%)';
     barEl.style.boxShadow = '0 0 8px rgba(58, 90, 74, 0.6)';
@@ -4916,6 +4955,98 @@ function updateStressDisplay(stress) {
   } else {
     barEl.style.background = 'linear-gradient(90deg, #8b3a3a 0%, #a03a3a 100%)';
     barEl.style.boxShadow = '0 0 15px rgba(139, 58, 58, 0.9)';
+  }
+  
+  // Applique les effets visuels
+  applyStressEffects(stress);
+}
+
+// Affiche un message du superviseur
+function showSupervisorMessage(stress) {
+  let messagePool;
+  
+  if (stress < 30) {
+    messagePool = supervisorMessages.low;
+  } else if (stress < 60) {
+    messagePool = supervisorMessages.medium;
+  } else if (stress < 85) {
+    messagePool = supervisorMessages.high;
+  } else {
+    messagePool = supervisorMessages.critical;
+  }
+  
+  // Choix aléatoire
+  const randomMessage = messagePool[Math.floor(Math.random() * messagePool.length)];
+  
+  const msgEl = document.getElementById('supervisorMessage');
+  const textEl = document.getElementById('supervisorText');
+  
+  if (msgEl && textEl) {
+    textEl.textContent = randomMessage;
+    msgEl.classList.add('show');
+    
+    setTimeout(() => {
+      msgEl.classList.remove('show');
+    }, 6000);
+  }
+}
+
+// Applique les effets visuels selon le stress
+function applyStressEffects(stress) {
+  // Stress léger (30+) - Overlay subtil
+  const stressOverlay = document.getElementById('stressOverlay');
+  if (stressOverlay) {
+    if (stress >= 30) {
+      stressOverlay.classList.add('active');
+    } else {
+      stressOverlay.classList.remove('active');
+    }
+  }
+  
+  // Stress moyen (50+) - Fatigue
+  const fatigueOverlay = document.getElementById('fatigueOverlay');
+  if (fatigueOverlay) {
+    if (stress >= 50) {
+      fatigueOverlay.classList.add('active');
+    } else {
+      fatigueOverlay.classList.remove('active');
+    }
+  }
+  
+  // Stress élevé (70+) - Vision périphérique
+  const peripheralDark = document.getElementById('peripheralDark');
+  const terminalContainer = document.getElementById('terminalContainer');
+  
+  if (peripheralDark && terminalContainer) {
+    if (stress >= 70) {
+      peripheralDark.classList.add('active');
+      terminalContainer.classList.add('fatigued');
+    } else {
+      peripheralDark.classList.remove('active');
+      terminalContainer.classList.remove('fatigued');
+    }
+  }
+  
+  // Stress critique (85+) - Indicateur de respiration
+  const breathingIndicator = document.getElementById('breathingIndicator');
+  if (breathingIndicator) {
+    if (stress >= 85) {
+      breathingIndicator.classList.add('active');
+      
+      // Glitch aléatoire
+      if (Math.random() > 0.7) {
+        triggerStaticBurst();
+      }
+    } else {
+      breathingIndicator.classList.remove('active');
+    }
+  }
+  
+  // Stress maximum (95+) - Distorsions
+  if (stress >= 95) {
+    if (Math.random() > 0.8) {
+      triggerDistortion();
+    }
   }
 }
 
