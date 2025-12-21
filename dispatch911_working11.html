@@ -2748,35 +2748,13 @@ body::after {
 <div class="breathing-indicator" id="breathingIndicator">💨</div>
 
 <!-- Supervisor messages -->
-<div id="supervisorMessage" style="
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%) translateY(100px);
-  background: linear-gradient(135deg, #1a1a22 0%, #12121a 100%);
-  border: 2px solid #7a6a3e;
-  border-radius: 8px;
-  padding: 16px 24px;
-  max-width: 600px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
-  z-index: 10010;
-  opacity: 0;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  font-family: 'Inter', sans-serif;
-">
-  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: #9a8a6a; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
-    <span style="font-size: 16px;">📻</span>
-    <span>SUPERVISOR - DISPATCH CONTROL</span>
+<div class="supervisor-message" id="supervisorMessage">
+  <div class="supervisor-header">
+    <span class="supervisor-icon">📻</span>
+    <span>Supervisor - Dispatch Control</span>
   </div>
-  <div id="supervisorText" style="color: #d8d8e0; font-size: 14px; line-height: 1.6;"></div>
+  <div class="supervisor-text" id="supervisorText"></div>
 </div>
-
-<style>
-#supervisorMessage.show {
-  transform: translateX(-50%) translateY(0) !important;
-  opacity: 1 !important;
-}
-</style>
 
 <div class="terminal-container hologram-effect" id="terminalContainer">
   
@@ -4833,6 +4811,37 @@ document.addEventListener('keyup', function(e) {
 });
 </script>
 
+<!-- SUPERVISOR MESSAGE - Repositionné en bas -->
+<div id="supervisorMessage" style="
+  position: fixed;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: linear-gradient(135deg, #1a1a22 0%, #12121a 100%);
+  border: 2px solid #7a6a3e;
+  border-radius: 8px;
+  padding: 16px 24px;
+  max-width: 600px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
+  z-index: 10010;
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  font-family: 'Inter', sans-serif;
+">
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px; color: #9a8a6a; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">
+    <span style="font-size: 16px;">📻</span>
+    <span>SUPERVISOR - DISPATCH CONTROL</span>
+  </div>
+  <div id="supervisorText" style="color: #d8d8e0; font-size: 14px; line-height: 1.6;"></div>
+</div>
+
+<style>
+#supervisorMessage.show {
+  transform: translateX(-50%) translateY(0) !important;
+  opacity: 1 !important;
+}
+</style>
+
 <!-- STRESS INDICATOR - Version fixe bien positionnée -->
 <div id="guiltIndicator" style="
   position: fixed;
@@ -5004,12 +5013,15 @@ function showSupervisorMessage(stress) {
   const textEl = document.getElementById('supervisorText');
   
   if (msgEl && textEl) {
+    console.log('📻 Showing supervisor message:', randomMessage);
     textEl.textContent = randomMessage;
     msgEl.classList.add('show');
     
     setTimeout(() => {
       msgEl.classList.remove('show');
     }, 6000);
+  } else {
+    console.warn('⚠️ Supervisor message elements not found');
   }
 }
 
@@ -5069,11 +5081,11 @@ function applyStressEffects(stress) {
       console.log('✅ Breathing indicator ON');
     }
     
-    // Glitch aléatoire
+    // Glitch simple sans fonction externe
     if (Math.random() > 0.7) {
-      console.log('⚡ Triggering static burst');
       const staticBurst = document.getElementById('staticBurst');
       if (staticBurst) {
+        console.log('⚡ Static burst!');
         staticBurst.classList.add('active');
         setTimeout(() => staticBurst.classList.remove('active'), 200);
       }
@@ -5085,9 +5097,9 @@ function applyStressEffects(stress) {
   // Stress maximum (95+) - Distorsions
   if (stress >= 95) {
     if (Math.random() > 0.8) {
-      console.log('⚡ Triggering distortion');
       const distortionWave = document.getElementById('distortionWave');
       if (distortionWave) {
+        console.log('⚡ Distortion wave!');
         distortionWave.classList.add('active');
         setTimeout(() => distortionWave.classList.remove('active'), 500);
       }
