@@ -4811,171 +4811,128 @@ document.addEventListener('keyup', function(e) {
 });
 </script>
 
-// ===== SYSTÈME DE GUILT =====
-let currentGuilt = 0;
-
-// Fonction appelée depuis Blueprint
-window.updateGuilt = function(guiltValue) {
-  currentGuilt = guiltValue;
-  
-  // Met à jour le pourcentage
-  document.getElementById('guiltPercent').textContent = guiltValue + '%';
-  
-  // Met à jour la barre
-  const bar = document.getElementById('guiltBar');
-  bar.style.width = guiltValue + '%';
-  
-  // Change la couleur selon le niveau
-  if (guiltValue < 25) {
-    bar.style.background = 'linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%)';
-  } else if (guiltValue < 50) {
-    bar.style.background = 'linear-gradient(90deg, #5a5a3a 0%, #7a6a3e 100%)';
-  } else if (guiltValue < 75) {
-    bar.style.background = 'linear-gradient(90deg, #7a5a3a 0%, #8b4a3a 100%)';
-  } else {
-    bar.style.background = 'linear-gradient(90deg, #8b3a3a 0%, #a03a3a 100%)';
-    bar.style.boxShadow = '0 0 20px rgba(139, 58, 58, 0.8)';
-  }
-  
-  // Met à jour le message
-  updateGuiltMessage(guiltValue);
-};
-
-// Messages selon le niveau de Guilt
-function updateGuiltMessage(guilt) {
-  const messageEl = document.getElementById('guiltMessage');
-  
-  if (guilt < 25) {
-    messageEl.textContent = 'Performance optimal';
-    messageEl.style.color = '#6a8a7a';
-  } else if (guilt < 50) {
-    messageEl.textContent = 'Quelques erreurs détectées';
-    messageEl.style.color = '#9a8a6a';
-  } else if (guilt < 75) {
-    messageEl.textContent = 'Performance préoccupante';
-    messageEl.style.color = '#a07070';
-  } else {
-    messageEl.textContent = 'ÉVALUATION CRITIQUE';
-    messageEl.style.color = '#c41e3a';
-    messageEl.style.fontWeight = 'bold';
-  }
-}
-
-// Initialise à 0
-window.updateGuilt(0);
-```
-
----
-
-### **📘 CÔTÉ BLUEPRINT:**
-
-**Quand le Guilt change, appelle JavaScript:**
-```
-[Event: After Guilt Change]
-    ↓
-[Get Web Browser Widget]
-    ↓
-[Execute JavaScript]
-    ↓
-Script: "updateGuilt(" + ToString(Guilt) + ")"
-```
-
-**Exemple concret:**
-```
-Guilt = 50
-    ↓
-Execute JavaScript: "updateGuilt(50)"
-```
-
----
-
-## ✅ SOLUTION 2: Widget UMG en Overlay (Alternative)
-
-Si tu VEUX absolument un Widget UMG, voici comment:
-
-### **Méthode:**
-
-**Utilise un Canvas Panel avec 2 layers:**
-```
-Canvas Panel (Screen)
-    ├─ Web Browser Widget (Z-Order: 0)
-    └─ Guilt Widget (Z-Order: 1) ← Par-dessus
-```
-
-**MAIS:** Le problème c'est que le Web Browser peut "manger" les inputs du widget au-dessus.
-
----
-
-## 🎯 MA RECOMMANDATION:
-
-**💡 SOLUTION 1 (HTML/JavaScript) est MEILLEURE car:**
-
-1. ✅ Pas de conflit de Z-order
-2. ✅ Style cohérent avec ton interface
-3. ✅ Animations CSS fluides
-4. ✅ Plus facile à débugger
-5. ✅ Moins de charge GPU
-
----
-
-## 📋 ÉTAPES RAPIDES:
-
-**1.** Copie le HTML du Guilt Indicator dans ton fichier HTML
-
-**2.** Copie le JavaScript `updateGuilt()` dans ton `<script>`
-
-**3.** Dans Blueprint, après avoir modifié Guilt:
-```
-Execute JavaScript: "updateGuilt(" + ToString(Guilt) + ")"
-
-</script>
-
-<!-- GUILT/STRESS INDICATOR -->
+<!-- STRESS INDICATOR - Version fixe bien positionnée -->
 <div id="guiltIndicator" style="
   position: fixed;
-  top: 80px;
-  left: 24px;
-  background: linear-gradient(180deg, #1a1a22 0%, #12121a 100%);
-  border: 1px solid #2a2a35;
-  border-radius: 10px;
-  padding: 16px 20px;
-  min-width: 280px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.8);
-  z-index: 10000;
+  top: 24px;
+  right: 380px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(58, 90, 74, 0.2);
+  border-radius: 6px;
+  padding: 8px 14px;
   font-family: 'JetBrains Mono', monospace;
+  z-index: 200;
 ">
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-    <span style="font-size: 11px; font-weight: 600; color: #7a7a82; text-transform: uppercase; letter-spacing: 0.5px;">
-      ⚠️ STRESS LEVEL
-    </span>
-    <span id="guiltPercent" style="font-size: 13px; font-weight: 700; color: #c4c4c8;">
-      0%
-    </span>
-  </div>
+  <!-- Icône + Label -->
+  <span style="font-size: 10px; font-weight: 600; color: #7a7a82; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">
+    ⚠️ STRESS
+  </span>
   
   <!-- Barre de progression -->
-  <div style="width: 100%; height: 12px; background: rgba(0, 0, 0, 0.4); border-radius: 6px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);">
+  <div style="width: 120px; height: 8px; background: rgba(0, 0, 0, 0.5); border-radius: 4px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);">
     <div id="guiltBar" style="
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, #3a5a4a 0%, #7a6a3e 50%, #8b3a3a 100%);
-      border-radius: 6px;
-      transition: width 0.8s ease, background 0.5s ease;
-      box-shadow: 0 0 10px rgba(139, 58, 58, 0.4);
+      background: linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%);
+      border-radius: 4px;
+      transition: width 1.5s cubic-bezier(0.4, 0.0, 0.2, 1), background 0.8s ease;
+      box-shadow: 0 0 8px rgba(58, 90, 74, 0.6);
     "></div>
   </div>
   
-  <!-- Message dynamique -->
-  <div id="guiltMessage" style="
-    margin-top: 10px;
-    font-size: 10px;
-    color: #7a7a82;
-    text-align: center;
-    font-style: italic;
-  ">
-    Performance optimal
-  </div>
+  <!-- Pourcentage -->
+  <span id="guiltPercent" style="font-size: 11px; font-weight: 700; color: #c4c4c8; min-width: 32px; text-align: right;">
+    0%
+  </span>
 </div>
 
+<script>
+// ... TOUT TON JAVASCRIPT EXISTANT AU-DESSUS ...
+
+// ===== SYSTÈME DE STRESS (VERSION SIMPLE) =====
+let currentStress = 0;
+let targetStress = 0;
+let animationFrameId = null;
+
+// Fonction appelée depuis Blueprint
+window.updateStress = function(newStress) {
+  console.log('📊 Blueprint called updateStress:', newStress);
+  targetStress = newStress;
+  animateStressBar();
+};
+
+// Animation progressive
+function animateStressBar() {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
+  
+  const animate = () => {
+    const diff = targetStress - currentStress;
+    
+    if (Math.abs(diff) > 0.1) {
+      currentStress += diff * 0.05;
+      updateStressDisplay(currentStress);
+      animationFrameId = requestAnimationFrame(animate);
+    } else {
+      currentStress = targetStress;
+      updateStressDisplay(currentStress);
+      animationFrameId = null;
+    }
+  };
+  
+  animate();
+}
+
+// Met à jour l'affichage
+function updateStressDisplay(stress) {
+  const roundedStress = Math.round(stress);
+  
+  const percentEl = document.getElementById('guiltPercent');
+  const barEl = document.getElementById('guiltBar');
+  
+  if (!percentEl || !barEl) {
+    console.error('❌ Elements not found!');
+    return;
+  }
+  
+  console.log('✅ Display updated:', roundedStress + '%');
+  
+  percentEl.textContent = roundedStress + '%';
+  barEl.style.width = stress + '%';
+  
+  if (stress < 25) {
+    barEl.style.background = 'linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%)';
+    barEl.style.boxShadow = '0 0 8px rgba(58, 90, 74, 0.6)';
+  } else if (stress < 50) {
+    barEl.style.background = 'linear-gradient(90deg, #5a5a3a 0%, #7a6a3e 100%)';
+    barEl.style.boxShadow = '0 0 10px rgba(122, 106, 62, 0.6)';
+  } else if (stress < 75) {
+    barEl.style.background = 'linear-gradient(90deg, #7a5a3a 0%, #8b4a3a 100%)';
+    barEl.style.boxShadow = '0 0 12px rgba(139, 74, 58, 0.7)';
+  } else {
+    barEl.style.background = 'linear-gradient(90deg, #8b3a3a 0%, #a03a3a 100%)';
+    barEl.style.boxShadow = '0 0 15px rgba(139, 58, 58, 0.9)';
+  }
+}
+
+// Animation CSS pour le pulse
+const stressStyle = document.createElement('style');
+stressStyle.textContent = `
+  @keyframes guiltPulse {
+    0%, 100% { box-shadow: 0 0 15px rgba(139, 58, 58, 0.9); }
+    50% { box-shadow: 0 0 25px rgba(139, 58, 58, 1); }
+  }
+`;
+document.head.appendChild(stressStyle);
+
+// Initialise à 0
+window.updateStress(0);
+// ===== FIN DU SYSTÈME DE STRESS =====
+
+</script>
 </body>
 </html>
