@@ -4699,7 +4699,7 @@ function playNotificationSound(type) {
       </div>
     </div>
     
-    <!-- VICTIMES ENCADRÉ -->
+<!-- VICTIMES ENCADRÉ -->
     <div style="border: 2px solid #444; padding: 20px; margin: 25px 0; background: rgba(255, 255, 255, 0.03);">
       <div style="font-weight: 900; margin-bottom: 12px; font-size: 13px; border-bottom: 1px solid #555; padding-bottom: 8px; color: #fff; text-transform: uppercase; letter-spacing: 1px;">
         VICTIMS
@@ -4857,91 +4857,43 @@ document.addEventListener('keyup', function(e) {
   font-family: 'JetBrains Mono', monospace;
   z-index: 200;
 ">
-  <!-- Icône + Label -->
   <span style="font-size: 10px; font-weight: 600; color: #7a7a82; text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;">
     ⚠️ STRESS
   </span>
   
-  <!-- Barre de progression -->
   <div style="width: 120px; height: 8px; background: rgba(0, 0, 0, 0.5); border-radius: 4px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);">
-    <div id="guiltBar" style="
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%);
-      border-radius: 4px;
-      transition: width 1.5s cubic-bezier(0.4, 0.0, 0.2, 1), background 0.8s ease;
-      box-shadow: 0 0 8px rgba(58, 90, 74, 0.6);
-    "></div>
+    <div id="guiltBar" style="height: 100%; width: 0%; background: linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%); border-radius: 4px; transition: width 1.5s cubic-bezier(0.4, 0.0, 0.2, 1), background 0.8s ease; box-shadow: 0 0 8px rgba(58, 90, 74, 0.6);"></div>
   </div>
   
-  <!-- Pourcentage -->
-  <span id="guiltPercent" style="font-size: 11px; font-weight: 700; color: #c4c4c8; min-width: 32px; text-align: right;">
-    0%
-  </span>
+  <span id="guiltPercent" style="font-size: 11px; font-weight: 700; color: #c4c4c8; min-width: 32px; text-align: right;">0%</span>
 </div>
 
 <script>
-// ... TOUT TON JAVASCRIPT EXISTANT AU-DESSUS ...
-
 // ===== SYSTÈME DE STRESS AVEC MESSAGES ET EFFETS =====
 let currentStress = 0;
 let targetStress = 0;
 let animationFrameId = null;
 
-// Messages du superviseur selon le niveau de stress
 const supervisorMessages = {
-  low: [  // 0-30
-    "Quiet night so far. Stay alert.",
-    "Good work. Keep it up.",
-    "Everything under control.",
-    "You're handling this well."
-  ],
-  medium: [ // 30-60
-    "Calls are picking up. Stay focused.",
-    "Busy shift. Remember to breathe.",
-    "Lot of activity tonight. Keep your head clear.",
-    "You're doing fine. Hang in there."
-  ],
-  high: [ // 60-85
-    "Tough night. Take it one call at a time.",
-    "Heavy load tonight. You got this.",
-    "Don't let the pressure get to you.",
-    "Stay calm. You're trained for this."
-  ],
-  critical: [ // 85-100
-    "Only 1 hour left. You can make it.",
-    "Almost done. Push through.",
-    "Shift ends soon. Hang in there.",
-    "You're exhausted. Stay with me."
-  ]
+  low: ["Quiet night so far. Stay alert.", "Good work. Keep it up.", "Everything under control.", "You're handling this well."],
+  medium: ["Calls are picking up. Stay focused.", "Busy shift. Remember to breathe.", "Lot of activity tonight. Keep your head clear.", "You're doing fine. Hang in there."],
+  high: ["Tough night. Take it one call at a time.", "Heavy load tonight. You got this.", "Don't let the pressure get to you.", "Stay calm. You're trained for this."],
+  critical: ["Only 1 hour left. You can make it.", "Almost done. Push through.", "Shift ends soon. Hang in there.", "You're exhausted. Stay with me."]
 };
 
-// Fonction appelée depuis Blueprint
 window.updateStress = function(newStress) {
   console.log('📊 Blueprint called updateStress:', newStress);
-  
-  // Message uniquement si le stress franchit un seuil de 20
   const oldThreshold = Math.floor(currentStress / 20);
   const newThreshold = Math.floor(newStress / 20);
-  
   targetStress = newStress;
   animateStressBar();
-  
-  // Affiche message si on change de seuil
-  if (newThreshold > oldThreshold && newStress >= 15) {
-    showSupervisorMessage(newStress);
-  }
+  if (newThreshold > oldThreshold && newStress >= 15) showSupervisorMessage(newStress);
 };
 
-// Animation progressive
 function animateStressBar() {
-  if (animationFrameId) {
-    cancelAnimationFrame(animationFrameId);
-  }
-  
+  if (animationFrameId) cancelAnimationFrame(animationFrameId);
   const animate = () => {
     const diff = targetStress - currentStress;
-    
     if (Math.abs(diff) > 0.1) {
       currentStress += diff * 0.05;
       updateStressDisplay(currentStress);
@@ -4952,28 +4904,19 @@ function animateStressBar() {
       animationFrameId = null;
     }
   };
-  
   animate();
 }
 
-// Met à jour l'affichage
 function updateStressDisplay(stress) {
   const roundedStress = Math.round(stress);
-  
   const percentEl = document.getElementById('guiltPercent');
   const barEl = document.getElementById('guiltBar');
-  
-  if (!percentEl || !barEl) {
-    console.error('❌ Elements not found!');
-    return;
-  }
+  if (!percentEl || !barEl) { console.error('❌ Elements not found!'); return; }
   
   console.log('✅ Display updated:', roundedStress + '%');
-  
   percentEl.textContent = roundedStress + '%';
   barEl.style.width = stress + '%';
   
-  // Couleurs selon le niveau
   if (stress < 25) {
     barEl.style.background = 'linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%)';
     barEl.style.boxShadow = '0 0 8px rgba(58, 90, 74, 0.6)';
@@ -4987,140 +4930,28 @@ function updateStressDisplay(stress) {
     barEl.style.background = 'linear-gradient(90deg, #8b3a3a 0%, #a03a3a 100%)';
     barEl.style.boxShadow = '0 0 15px rgba(139, 58, 58, 0.9)';
   }
-  
-  // Applique les effets visuels
-  applyStressEffects(stress);
 }
 
-// Affiche un message du superviseur
 function showSupervisorMessage(stress) {
-  let messagePool;
+  let pool;
+  if (stress < 30) pool = supervisorMessages.low;
+  else if (stress < 60) pool = supervisorMessages.medium;
+  else if (stress < 85) pool = supervisorMessages.high;
+  else pool = supervisorMessages.critical;
   
-  if (stress < 30) {
-    messagePool = supervisorMessages.low;
-  } else if (stress < 60) {
-    messagePool = supervisorMessages.medium;
-  } else if (stress < 85) {
-    messagePool = supervisorMessages.high;
-  } else {
-    messagePool = supervisorMessages.critical;
-  }
-  
-  // Choix aléatoire
-  const randomMessage = messagePool[Math.floor(Math.random() * messagePool.length)];
-  
+  const msg = pool[Math.floor(Math.random() * pool.length)];
   const msgEl = document.getElementById('supervisorMessage');
   const textEl = document.getElementById('supervisorText');
   
   if (msgEl && textEl) {
-    console.log('📻 Showing supervisor message:', randomMessage);
-    textEl.textContent = randomMessage;
+    console.log('📻 Supervisor:', msg);
+    textEl.textContent = msg;
     msgEl.classList.add('show');
-    
-    setTimeout(() => {
-      msgEl.classList.remove('show');
-    }, 6000);
-  } else {
-    console.warn('⚠️ Supervisor message elements not found');
+    setTimeout(() => msgEl.classList.remove('show'), 6000);
   }
 }
 
-// Applique les effets visuels selon le stress
-function applyStressEffects(stress) {
-  console.log('🎨 Applying stress effects for level:', stress);
-  
-  // Stress léger (30+) - Overlay subtil
-  const stressOverlay = document.getElementById('stressOverlay');
-  if (stressOverlay) {
-    if (stress >= 30) {
-      stressOverlay.classList.add('active');
-      console.log('✅ Stress overlay ON');
-    } else {
-      stressOverlay.classList.remove('active');
-    }
-  } else {
-    console.warn('⚠️ stressOverlay not found');
-  }
-  
-  // Stress moyen (50+) - Fatigue
-  const fatigueOverlay = document.getElementById('fatigueOverlay');
-  if (fatigueOverlay) {
-    if (stress >= 50) {
-      fatigueOverlay.classList.add('active');
-      console.log('✅ Fatigue overlay ON');
-    } else {
-      fatigueOverlay.classList.remove('active');
-    }
-  } else {
-    console.warn('⚠️ fatigueOverlay not found');
-  }
-  
-  // Stress élevé (70+) - Vision périphérique
-  const peripheralDark = document.getElementById('peripheralDark');
-  const terminalContainer = document.getElementById('terminalContainer');
-  
-  if (stress >= 70) {
-    if (peripheralDark) {
-      peripheralDark.classList.add('active');
-      console.log('✅ Peripheral dark ON');
-    }
-    if (terminalContainer) {
-      terminalContainer.classList.add('fatigued');
-      console.log('✅ Terminal fatigued ON');
-    }
-  } else {
-    if (peripheralDark) peripheralDark.classList.remove('active');
-    if (terminalContainer) terminalContainer.classList.remove('fatigued');
-  }
-  
-  // Stress critique (85+) - Indicateur de respiration
-  const breathingIndicator = document.getElementById('breathingIndicator');
-  if (stress >= 85) {
-    if (breathingIndicator) {
-      breathingIndicator.classList.add('active');
-      console.log('✅ Breathing indicator ON');
-    }
-    
-    // Glitch simple sans fonction externe
-    if (Math.random() > 0.7) {
-      const staticBurst = document.getElementById('staticBurst');
-      if (staticBurst) {
-        console.log('⚡ Static burst!');
-        staticBurst.classList.add('active');
-        setTimeout(() => staticBurst.classList.remove('active'), 200);
-      }
-    }
-  } else {
-    if (breathingIndicator) breathingIndicator.classList.remove('active');
-  }
-  
-  // Stress maximum (95+) - Distorsions
-  if (stress >= 95) {
-    if (Math.random() > 0.8) {
-      const distortionWave = document.getElementById('distortionWave');
-      if (distortionWave) {
-        console.log('⚡ Distortion wave!');
-        distortionWave.classList.add('active');
-        setTimeout(() => distortionWave.classList.remove('active'), 500);
-      }
-    }
-  }
-}
-
-// Animation CSS pour le pulse
-const stressStyle = document.createElement('style');
-stressStyle.textContent = `
-  @keyframes guiltPulse {
-    0%, 100% { box-shadow: 0 0 15px rgba(139, 58, 58, 0.9); }
-    50% { box-shadow: 0 0 25px rgba(139, 58, 58, 1); }
-  }
-`;
-document.head.appendChild(stressStyle);
-
-// Initialise à 0
 window.updateStress(0);
-// ===== FIN DU SYSTÈME DE STRESS =====
-
 </script>
 </body>
 </html>
