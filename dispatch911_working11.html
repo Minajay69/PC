@@ -4812,36 +4812,47 @@ document.addEventListener('keyup', function(e) {
 </script>
 
 // ===== SYSTÈME DE GUILT AVEC ANIMATION PROGRESSIVE =====
-let currentGuilt = 0;
-let targetGuilt = 0;
+// ===== SYSTÈME DE STRESS AUTONOME =====
+let currentStress = 0;
+let targetStress = 0;
 let animationFrameId = null;
 
-// Fonction appelée depuis Blueprint
-window.updateGuilt = function(guiltValue) {
-  targetGuilt = Math.min(100, Math.max(0, guiltValue)); // Clamp entre 0-100
-  animateGuiltBar();
+// Écoute les messages console du Blueprint
+const originalLog = console.log;
+console.log = function() {
+  const message = Array.from(arguments).join(' ');
+  
+  // Détecte les messages de stress
+  if (message.includes('[UE4_DISPATCH]')) {
+    targetStress = Math.min(100, targetStress + 25);
+    animateStressBar();
+  }
+  
+  if (message.includes('[UE4_CLOSECALL]')) {
+    targetStress = Math.min(100, targetStress + 50);
+    animateStressBar();
+  }
+  
+  // Appelle le console.log original
+  originalLog.apply(console, arguments);
 };
 
 // Animation progressive de la barre
-function animateGuiltBar() {
+function animateStressBar() {
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
   }
   
   const animate = () => {
-    // Progression douce vers la cible
-    const diff = targetGuilt - currentGuilt;
+    const diff = targetStress - currentStress;
     
     if (Math.abs(diff) > 0.1) {
-      currentGuilt += diff * 0.05; // Vitesse d'animation (plus petit = plus lent)
-      
-      // Met à jour l'affichage
-      updateGuiltDisplay(currentGuilt);
-      
+      currentStress += diff * 0.05;
+      updateStressDisplay(currentStress);
       animationFrameId = requestAnimationFrame(animate);
     } else {
-      currentGuilt = targetGuilt;
-      updateGuiltDisplay(currentGuilt);
+      currentStress = targetStress;
+      updateStressDisplay(currentStress);
       animationFrameId = null;
     }
   };
@@ -4850,70 +4861,39 @@ function animateGuiltBar() {
 }
 
 // Met à jour l'affichage visuel
-function updateGuiltDisplay(guilt) {
-  const roundedGuilt = Math.round(guilt);
+function updateStressDisplay(stress) {
+  const roundedStress = Math.round(stress);
   
-  // Met à jour le pourcentage
-  document.getElementById('guiltPercent').textContent = roundedGuilt + '%';
+  document.getElementById('guiltPercent').textContent = roundedStress + '%';
   
-  // Met à jour la barre
   const bar = document.getElementById('guiltBar');
-  bar.style.width = guilt + '%';
+  bar.style.width = stress + '%';
   
-  // Change la couleur et le glow selon le niveau
-  if (guilt < 25) {
+  if (stress < 25) {
     bar.style.background = 'linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%)';
     bar.style.boxShadow = '0 0 8px rgba(58, 90, 74, 0.6)';
-  } else if (guilt < 50) {
+  } else if (stress < 50) {
     bar.style.background = 'linear-gradient(90deg, #5a5a3a 0%, #7a6a3e 100%)';
     bar.style.boxShadow = '0 0 10px rgba(122, 106, 62, 0.6)';
-  } else if (guilt < 75) {
+  } else if (stress < 75) {
     bar.style.background = 'linear-gradient(90deg, #7a5a3a 0%, #8b4a3a 100%)';
     bar.style.boxShadow = '0 0 12px rgba(139, 74, 58, 0.7)';
   } else {
     bar.style.background = 'linear-gradient(90deg, #8b3a3a 0%, #a03a3a 100%)';
     bar.style.boxShadow = '0 0 15px rgba(139, 58, 58, 0.9)';
-    // Animation de pulsation pour niveau critique
     bar.style.animation = 'guiltPulse 2s ease-in-out infinite';
-  }
-  
-  // Met à jour le message
-  updateGuiltMessage(guilt);
-}
-
-// Messages selon le niveau de Guilt
-function updateGuiltMessage(guilt) {
-  const messageEl = document.getElementById('guiltMessage');
-  
-  if (guilt < 25) {
-    messageEl.textContent = 'Performance optimal';
-    messageEl.style.color = '#6a8a7a';
-  } else if (guilt < 50) {
-    messageEl.textContent = 'Erreurs détectées';
-    messageEl.style.color = '#9a8a6a';
-  } else if (guilt < 75) {
-    messageEl.textContent = 'Performance préoccupante';
-    messageEl.style.color = '#a07070';
-  } else {
-    messageEl.textContent = 'ÉVALUATION CRITIQUE';
-    messageEl.style.color = '#c41e3a';
-    messageEl.style.fontWeight = 'bold';
   }
 }
 
 // Animation CSS pour le pulse
-const guiltStyle = document.createElement('style');
-guiltStyle.textContent = `
+const stressStyle = document.createElement('style');
+stressStyle.textContent = `
   @keyframes guiltPulse {
-    0%, 100% {
-      box-shadow: 0 0 15px rgba(139, 58, 58, 0.9);
-    }
-    50% {
-      box-shadow: 0 0 25px rgba(139, 58, 58, 1);
-    }
+    0%, 100% { box-shadow: 0 0 15px rgba(139, 58, 58, 0.9); }
+    50% { box-shadow: 0 0 25px rgba(139, 58, 58, 1); }
   }
 `;
-document.head.appendChild(guiltStyle);
+document.head.appendChild(stressStyle);
 
 // Initialise à 0
 window.updateGuilt(0);
