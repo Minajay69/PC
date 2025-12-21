@@ -4813,79 +4813,62 @@ document.addEventListener('keyup', function(e) {
 
 // ===== SYSTÈME DE GUILT AVEC ANIMATION PROGRESSIVE =====
 // ===== SYSTÈME DE STRESS AUTONOME =====
+// ===== SYSTÈME DE STRESS AVEC URL =====
 let currentStress = 0;
 let targetStress = 0;
 let animationFrameId = null;
 
-// Écoute les messages console du Blueprint
-const originalLog = console.log;
-console.log = function() {
-  const message = Array.from(arguments).join(' ');
+// Lit le stress depuis l'URL
+function loadStressFromURL() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const stressParam = urlParams.get('stress');
   
-  // Détecte les messages de stress
-  if (message.includes('[UE4_DISPATCH]')) {
-    targetStress = Math.min(100, targetStress + 25);
-    animateStressBar();
-  }
+  console.log('🔍 URL Stress param:', stressParam);
   
-  if (message.includes('[UE4_CLOSECALL]')) {
-    targetStress = Math.min(100, targetStress + 50);
-    animateStressBar();
-  }
-  
-  // Appelle le console.log original
-  originalLog.apply(console, arguments);
-};
-
-// Animation progressive de la barre
-function animateStressBar() {
-  if (animationFrameId) {
-    cancelAnimationFrame(animationFrameId);
-  }
-  
-  const animate = () => {
-    const diff = targetStress - currentStress;
-    
-    if (Math.abs(diff) > 0.1) {
-      currentStress += diff * 0.05;
-      updateStressDisplay(currentStress);
-      animationFrameId = requestAnimationFrame(animate);
-    } else {
-      currentStress = targetStress;
-      updateStressDisplay(currentStress);
-      animationFrameId = null;
+  if (stressParam !== null) {
+    const stress = parseInt(stressParam);
+    if (!isNaN(stress)) {
+      console.log('✅ Setting stress to:', stress);
+      targetStress = stress;
+      currentStress = stress;
+      updateStressDisplay(stress);
     }
-  };
-  
-  animate();
+  }
 }
 
-// Met à jour l'affichage visuel
+// Met à jour l'affichage
 function updateStressDisplay(stress) {
   const roundedStress = Math.round(stress);
   
-  document.getElementById('guiltPercent').textContent = roundedStress + '%';
+  const percentEl = document.getElementById('guiltPercent');
+  const barEl = document.getElementById('guiltBar');
   
-  const bar = document.getElementById('guiltBar');
-  bar.style.width = stress + '%';
+  if (!percentEl || !barEl) {
+    console.error('❌ Stress elements not found!');
+    return;
+  }
+  
+  console.log('📊 Updating stress bar to:', roundedStress + '%');
+  
+  percentEl.textContent = roundedStress + '%';
+  barEl.style.width = stress + '%';
   
   if (stress < 25) {
-    bar.style.background = 'linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%)';
-    bar.style.boxShadow = '0 0 8px rgba(58, 90, 74, 0.6)';
+    barEl.style.background = 'linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%)';
+    barEl.style.boxShadow = '0 0 8px rgba(58, 90, 74, 0.6)';
   } else if (stress < 50) {
-    bar.style.background = 'linear-gradient(90deg, #5a5a3a 0%, #7a6a3e 100%)';
-    bar.style.boxShadow = '0 0 10px rgba(122, 106, 62, 0.6)';
+    barEl.style.background = 'linear-gradient(90deg, #5a5a3a 0%, #7a6a3e 100%)';
+    barEl.style.boxShadow = '0 0 10px rgba(122, 106, 62, 0.6)';
   } else if (stress < 75) {
-    bar.style.background = 'linear-gradient(90deg, #7a5a3a 0%, #8b4a3a 100%)';
-    bar.style.boxShadow = '0 0 12px rgba(139, 74, 58, 0.7)';
+    barEl.style.background = 'linear-gradient(90deg, #7a5a3a 0%, #8b4a3a 100%)';
+    barEl.style.boxShadow = '0 0 12px rgba(139, 74, 58, 0.7)';
   } else {
-    bar.style.background = 'linear-gradient(90deg, #8b3a3a 0%, #a03a3a 100%)';
-    bar.style.boxShadow = '0 0 15px rgba(139, 58, 58, 0.9)';
-    bar.style.animation = 'guiltPulse 2s ease-in-out infinite';
+    barEl.style.background = 'linear-gradient(90deg, #8b3a3a 0%, #a03a3a 100%)';
+    barEl.style.boxShadow = '0 0 15px rgba(139, 58, 58, 0.9)';
   }
 }
 
-// Animation CSS pour le pulse
+// Animation CSS pour le pulse (garde-la si elle n'existe pas déjà)
 const stressStyle = document.createElement('style');
 stressStyle.textContent = `
   @keyframes guiltPulse {
@@ -4895,10 +4878,13 @@ stressStyle.textContent = `
 `;
 document.head.appendChild(stressStyle);
 
-// Initialise à 0
-window.updateGuilt(0);
+// Charge le stress au démarrage
+window.addEventListener('load', function() {
+  console.log('🚀 Page loaded');
+  loadStressFromURL();
+});
 
-// ===== FIN DU SYSTÈME DE GUILT =====
+// ===== FIN DU SYSTÈME DE STRESS =====
 
 </script>
 
