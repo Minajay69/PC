@@ -4179,8 +4179,6 @@ window.dispatchUnits = function() {
 };
 
 window.closeCall = function() {
-  // ===== AJOUTE CETTE LIGNE =====
-
   console.log('[UE4_CLOSECALL]');
   
   showNotification('Call closed - Referred to utility', 'info');
@@ -4195,12 +4193,26 @@ window.closeCall = function() {
     document.getElementById('emergencyFlash').classList.add('active');
     setTimeout(() => document.getElementById('emergencyFlash').classList.remove('active'), 3000);
     
-    // AFFICHE LE NEWSPAPER
+    // ===== UTILISE L'AUTRE NEWSPAPER =====
     setTimeout(function() {
-      document.getElementById('newspaperTest').style.display = 'block';
+      const newspaper = document.getElementById('newspaperOverlay');
+      
+      if (newspaper) {
+        newspaper.style.display = 'flex';
+        newspaper.style.opacity = '0';
+        
+        setTimeout(function() {
+          newspaper.style.transition = 'opacity 2s ease-in';
+          newspaper.style.opacity = '1';
+        }, 50);
+      } else {
+        console.error('❌ Newspaper introuvable!');
+        alert('ERREUR: Aucun newspaper trouvé dans le HTML!');
+      }
+      
     }, 2000);
     
-  }, 20000);
+  }, 3000); // ← Changé à 3 secondes pour tester
 };
 
 // ===== FONCTION POUR DÉCLENCHER CALL #2 =====
@@ -4579,18 +4591,6 @@ function playDramaticSound() {
 
 // Ton code existant...
 
-// TEST NEWSPAPER
-window.testNewspaper = function() {
-  document.getElementById('newspaperTest').style.display = 'block';
-};
-
-window.closeCall = function() {
-  showNotification('Test in 3 sec', 'info');
-  setTimeout(function() {
-    document.getElementById('newspaperTest').style.display = 'block';
-  }, 3000);
-};
-
 // ===== COLLE ICI ↓ =====
 const NotificationSounds = {
   info: 'data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=',
@@ -4828,6 +4828,58 @@ document.addEventListener('keyup', function(e) {
   }
 });
 </script>
+
+// ===== SYSTÈME DE CALLS DYNAMIQUE =====
+
+window.setCallID = function(id) {
+  document.querySelector('.call-id-number').textContent = '#' + id;
+  console.log('✅ Call ID set:', id);
+};
+
+window.setCallPriority = function(priority) {
+  const badge = document.querySelector('.call-priority-badge');
+  badge.className = 'call-priority-badge priority-' + priority.toLowerCase();
+  badge.querySelector('span:last-child').textContent = priority.toUpperCase();
+  console.log('✅ Priority set:', priority);
+};
+
+window.setCallAddress = function(address) {
+  document.querySelector('.metadata-card:nth-child(1) .metadata-value').textContent = address;
+  console.log('✅ Address set:', address);
+};
+
+window.setCallDistrict = function(district) {
+  document.querySelector('.metadata-card:nth-child(2) .metadata-value').textContent = district;
+  console.log('✅ District set:', district);
+};
+
+window.setCallProfile = function(profile) {
+  document.querySelector('.metadata-card:nth-child(3) .metadata-value').textContent = profile;
+  console.log('✅ Profile set:', profile);
+};
+
+window.clearTranscript = function() {
+  const container = document.querySelector('.call-transcript-container');
+  container.innerHTML = '';
+  console.log('🗑️ Transcript cleared');
+};
+
+window.addTranscriptLine = function(line, isNote) {
+  const container = document.querySelector('.call-transcript-container');
+  const lineEl = document.createElement('div');
+  lineEl.className = 'transcript-line';
+  
+  if (isNote) {
+    lineEl.classList.add('transcript-note');
+  }
+  
+  lineEl.textContent = line;
+  container.appendChild(lineEl);
+  console.log('📝 Line added:', line);
+};
+
+// ===== FIN DU SYSTÈME DE CALLS =====
+
 
 </script>
 </body>
