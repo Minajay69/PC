@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NightShift911 - Structure Vide</title>
+<style>
+:root {
+  --bg-primary: #0d0d12;
+  --bg-secondary: #16161d;
+  --bg-tertiary: #1c1c26;
+  --accent-primary: #4a5568;
+  --text-primary: #c4c4c8;
+  --text-secondary: #7a7a82;
+  --border-color: #26262e;
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.8);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #0d0d12 0%, #1a1520 100%);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+.terminal-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== HEADER ===== */
+.terminal-header {
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  font-family: 'Arial', sans-serif;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 40px;
+}
+
+.system-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  font-size: 24px;
+}
+
+.system-title h1 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.system-subtitle {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.first-night-badge {
+  background: linear-gradient(135deg, #5a4a35 0%, #4a3a25 100%);
+  border: 1px solid rgba(122, 106, 62, 0.3);
+  color: #a8956f;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  min-width: 150px;
+  min-height: 32px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 40px;
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(58, 90, 74, 0.08);
+  border: 1px solid rgba(58, 90, 74, 0.2);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3a5a4a;
+  box-shadow: 0 0 8px rgba(58, 90, 74, 0.4);
+}
+
+/* ===== WORKSPACE ===== */
+.terminal-workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(400px, 1fr) 380px 280px;
+  gap: 20px;
+  padding: 20px;
+  overflow: hidden;
+}
+
+/* ===== LEFT PANEL ===== */
+.workspace-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Call Display Panel */
+.call-display-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  height: 280px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Call Transcript Container */
+.call-transcript-container {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(74, 85, 104, 0.08);
+  border-radius: 8px;
+  padding: 16px;
+  flex: 1;
+}
+
+/* Call Metadata Grid */
+.call-metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.metadata-card {
+  background: linear-gradient(135deg, rgba(74, 85, 104, 0.04) 0%, rgba(58, 68, 84, 0.04) 100%);
+  border: 1px solid rgba(74, 85, 104, 0.12);
+  border-left: 2px solid var(--accent-primary);
+  border-radius: 6px;
+  padding: 12px;
+  height: 60px;
+}
+
+/* Database Panel */
+.database-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-navigation {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 2px;
+  height: 40px;
+}
+
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ===== RIGHT PANEL ===== */
+.workspace-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ===== FAR RIGHT PANEL (Stats) ===== */
+.workspace-far-right {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Units Panel */
+.units-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+  height: 400px;
+}
+
+/* Dispatch Panel */
+.dispatch-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+  flex: 1;
+}
+
+/* Stats Panel */
+.stats-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+  height: 100%;
+}
+
+/* ===== PANEL HEADER (pour identifier les zones) ===== */
+.panel-header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  height: 40px;
+}
+
+/* ===== CONTAINERS VIDES ===== */
+.empty-container {
+  width: 100%;
+  height: 100%;
+}
+</style>
+</head>
+<body>
+
+<div class="terminal-container">
+  
+  <!-- ===== HEADER ===== -->
+  <div class="terminal-header">
+    <div class="header-left">
+      <div class="system-logo">
+        <div class="logo-icon">🚨</div>
+        <div class="system-title">
+          <h1>NightShift911 Dispatch</h1>
+          <div class="system-subtitle">Emergency Response Terminal v2.8</div>
+        </div>
+      </div>
+      <div class="first-night-badge"></div>
+    </div>
+    <div class="header-right">
+      <div class="system-status">
+        <div class="status-indicator"></div>
+        <span>SYSTEM ONLINE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== WORKSPACE ===== -->
+  <div class="terminal-workspace">
+    
+    <!-- ===== LEFT COLUMN ===== -->
+    <div class="workspace-left">
+      
+      <!-- Call Display Panel -->
+      <div class="call-display-panel">
+        <div class="call-transcript-container"></div>
+        <div class="call-metadata-grid">
+          <div class="metadata-card"></div>
+          <div class="metadata-card"></div>
+          <div class="metadata-card"></div>
+          <div class="metadata-card"></div>
+        </div>
+      </div>
+
+      <!-- Database Panel -->
+      <div class="database-panel">
+        <div class="tab-navigation"></div>
+        <div class="tab-content"></div>
+      </div>
+
+    </div>
+
+    <!-- ===== MIDDLE COLUMN ===== -->
+    <div class="workspace-right">
+
+      <!-- Units Panel -->
+      <div class="units-panel">
+        <div class="empty-container"></div>
+      </div>
+
+      <!-- Dispatch Panel -->
+      <div class="dispatch-panel">
+        <div class="empty-container"></div>
+      </div>
+
+    </div>
+
+    <!-- ===== RIGHT COLUMN (Stats) ===== -->
+    <div class="workspace-far-right">
+      
+      <!-- Stats Panel -->
+      <div class="stats-panel">
+        <div class="empty-container"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// Pas de JavaScript nécessaire - tout est géré par Blueprint
+console.log('✅ Structure vide chargée - Prête pour Blueprint');
+</script>
+
+</body>
+</html>
