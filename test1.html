@@ -624,11 +624,43 @@ body {
 </div>
 
 <script>
-// ===== SYSTÈME DE STRESS (VERSION DIRECTE) =====
+// ===== SYSTÈME DE STRESS (VERSION SMOOTH LENTE) =====
+let currentStress = 0;
+let targetStress = 0;
+let animationFrameId = null;
+
 window.updateStress = function(newStress) {
   console.log('📊 Blueprint called updateStress:', newStress);
+  targetStress = Math.max(0, Math.min(100, newStress)); // Clamp entre 0-100
+  animateStressBar();
+};
+
+// Animation progressive LENTE
+function animateStressBar() {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
   
-  const stress = Math.max(0, Math.min(100, newStress)); // Clamp entre 0-100
+  const animate = () => {
+    const diff = targetStress - currentStress;
+    
+    if (Math.abs(diff) > 0.1) {
+      currentStress += diff * 0.02; // ← Plus petit = plus lent (était 0.05)
+      updateStressDisplay(currentStress);
+      animationFrameId = requestAnimationFrame(animate);
+    } else {
+      currentStress = targetStress;
+      updateStressDisplay(currentStress);
+      animationFrameId = null;
+    }
+  };
+  
+  animate();
+}
+
+// Met à jour l'affichage
+function updateStressDisplay(stress) {
+  const roundedStress = Math.round(stress);
   
   const percentEl = document.getElementById('guiltPercent');
   const barEl = document.getElementById('guiltBar');
@@ -638,10 +670,7 @@ window.updateStress = function(newStress) {
     return;
   }
   
-  console.log('✅ Stress display updated:', stress + '%');
-  
-  // Update direct sans animation JS
-  percentEl.textContent = Math.round(stress) + '%';
+  percentEl.textContent = roundedStress + '%';
   barEl.style.width = stress + '%';
   
   // Change la couleur en fonction du niveau
@@ -658,7 +687,7 @@ window.updateStress = function(newStress) {
     barEl.style.background = 'linear-gradient(90deg, #8b3a3a 0%, #a03a3a 100%)';
     barEl.style.boxShadow = '0 0 15px rgba(139, 58, 58, 0.9)';
   }
-};
+}
 
 // Initialise à 0
 window.updateStress(0);
