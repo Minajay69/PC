@@ -161,7 +161,7 @@ body {
   width: 0%;
   background: linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%);
   border-radius: 4px;
-  transition: background 0.8s ease; /* ← Enlève "width" */
+  transition: background 0.8s ease;
   box-shadow: 0 0 8px rgba(58, 90, 74, 0.6);
 }
 
@@ -624,18 +624,18 @@ body {
 </div>
 
 <script>
-// ===== SYSTÈME DE STRESS (VERSION SMOOTH LENTE) =====
+// ===== SYSTÈME DE STRESS (VERSION SMOOTH MAXIMALE) =====
 let currentStress = 0;
 let targetStress = 0;
 let animationFrameId = null;
 
 window.updateStress = function(newStress) {
   console.log('📊 Blueprint called updateStress:', newStress);
-  targetStress = Math.max(0, Math.min(100, newStress)); // Clamp entre 0-100
+  targetStress = Math.max(0, Math.min(100, newStress));
   animateStressBar();
 };
 
-// Animation progressive LENTE
+// Animation progressive TRÈS LENTE
 function animateStressBar() {
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
@@ -645,7 +645,7 @@ function animateStressBar() {
     const diff = targetStress - currentStress;
     
     if (Math.abs(diff) > 0.1) {
-      currentStress += diff * 0.02; // ← Plus lent (était 0.05)
+      currentStress += diff * 0.015; // ← Encore plus lent pour être ultra-smooth
       updateStressDisplay(currentStress);
       animationFrameId = requestAnimationFrame(animate);
     } else {
