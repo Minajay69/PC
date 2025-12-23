@@ -161,7 +161,7 @@ body {
   width: 0%;
   background: linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%);
   border-radius: 4px;
-  transition: width 1.5s ease-out, background 0.8s ease; /* ← Plus lent */
+  transition: background 0.8s ease; /* ← Enlève "width" */
   box-shadow: 0 0 8px rgba(58, 90, 74, 0.6);
 }
 
@@ -645,7 +645,7 @@ function animateStressBar() {
     const diff = targetStress - currentStress;
     
     if (Math.abs(diff) > 0.1) {
-      currentStress += diff * 0.02; // ← Plus petit = plus lent (était 0.05)
+      currentStress += diff * 0.02; // ← Plus lent (était 0.05)
       updateStressDisplay(currentStress);
       animationFrameId = requestAnimationFrame(animate);
     } else {
