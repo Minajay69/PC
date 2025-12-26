@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NightShift911 - Structure Vide</title>
+<style>
+:root {
+  --bg-primary: #0d0d12;
+  --bg-secondary: #16161d;
+  --bg-tertiary: #1c1c26;
+  --accent-primary: #4a5568;
+  --text-primary: #c4c4c8;
+  --text-secondary: #7a7a82;
+  --text-muted: #4a4a52;
+  --border-color: #26262e;
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.8);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background: linear-gradient(135deg, #0d0d12 0%, #1a1520 100%);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+.terminal-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== HEADER ===== */
+.terminal-header {
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+  font-family: 'Arial', sans-serif;
+  flex-shrink: 0;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  height: 40px;
+}
+
+.system-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  font-size: 24px;
+}
+
+.system-title h1 {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.system-subtitle {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin-top: 2px;
+}
+
+.first-night-badge {
+  background: linear-gradient(135deg, #5a4a35 0%, #4a3a25 100%);
+  border: 1px solid rgba(122, 106, 62, 0.3);
+  color: #a8956f;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  min-width: 150px;
+  min-height: 32px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 40px;
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  background: rgba(58, 90, 74, 0.08);
+  border: 1px solid rgba(58, 90, 74, 0.2);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #3a5a4a;
+  box-shadow: 0 0 8px rgba(58, 90, 74, 0.4);
+}
+
+/* ===== STRESS INDICATOR ===== */
+#guiltIndicator {
+  position: fixed;
+  top: 24px;
+  right: 380px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(58, 90, 74, 0.2);
+  border-radius: 6px;
+  padding: 8px 14px;
+  font-family: 'JetBrains Mono', monospace;
+  z-index: 200;
+}
+
+#guiltIndicator span:first-child {
+  font-size: 10px;
+  font-weight: 600;
+  color: #7a7a82;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.stress-bar-container {
+  width: 120px;
+  height: 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+#guiltBar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%);
+  border-radius: 4px;
+  transition: background 0.8s ease;
+  box-shadow: 0 0 8px rgba(58, 90, 74, 0.6);
+}
+
+#guiltPercent {
+  font-size: 11px;
+  font-weight: 700;
+  color: #c4c4c8;
+  min-width: 32px;
+  text-align: right;
+}
+
+/* ===== WORKSPACE - 2 COLONNES ===== */
+.terminal-workspace {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(400px, 1fr) 380px;
+  gap: 20px;
+  padding: 20px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ===== LEFT COLUMN ===== */
+.workspace-left {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Call Display Panel - Hauteur fixe */
+.call-display-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow-lg);
+  flex-shrink: 0;
+  height: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Call Transcript Container */
+.call-transcript-container {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(74, 85, 104, 0.08);
+  border-radius: 8px;
+  padding: 16px;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Call Metadata Grid */
+.call-metadata-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.metadata-card {
+  background: linear-gradient(135deg, rgba(74, 85, 104, 0.04) 0%, rgba(58, 68, 84, 0.04) 100%);
+  border: 1px solid rgba(74, 85, 104, 0.12);
+  border-left: 2px solid var(--accent-primary);
+  border-radius: 6px;
+  padding: 12px;
+  height: 60px;
+}
+
+.metadata-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+/* Database Panel - 3 COLONNES */
+.database-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.database-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+.database-column {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.database-column-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(74, 85, 104, 0.2);
+  flex-shrink: 0;
+}
+
+.database-column-content {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ===== RIGHT COLUMN ===== */
+.workspace-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Units Panel - Hauteur flexible mais limitée */
+.units-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Dispatch Panel */
+.dispatch-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+  flex: 1.8;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Stats Panel */
+.stats-panel {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: var(--shadow-lg);
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ===== PANEL HEADER ===== */
+.panel-header {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-primary);
+}
+
+/* ===== DISPATCH CONTENT ===== */
+.dispatch-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+.dispatch-actions {
+  flex: 1;
+  min-height: 0;
+}
+
+/* Resource Monitor */
+.resource-monitor {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 14px;
+  flex-shrink: 0;
+}
+
+.resource-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.resource-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.resource-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(74, 85, 104, 0.1);
+}
+
+.resource-label {
+  color: var(--text-muted);
+}
+
+.resource-value {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* ===== STATS GRID ===== */
+.stats-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  overflow: hidden;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(74, 85, 104, 0.1);
+  font-size: 11px;
+}
+
+.stat-name {
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding-right: 8px;
+}
+
+.stat-data {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--text-primary);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ===== CONTAINERS VIDES ===== */
+.empty-container {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+</style>
+</head>
+<body>
+
+<!-- ===== STRESS INDICATOR (FIXED POSITION) ===== -->
+<div id="guiltIndicator">
+  <span>⚠️ STRESS</span>
+  <div class="stress-bar-container">
+    <div id="guiltBar"></div>
+  </div>
+  <span id="guiltPercent">0%</span>
+</div>
+
+<div class="terminal-container">
+  
+  <!-- ===== HEADER ===== -->
+  <div class="terminal-header">
+    <div class="header-left">
+      <div class="system-logo">
+        <div class="logo-icon">🚨</div>
+        <div class="system-title">
+          <h1>NightShift911 Dispatch</h1>
+          <div class="system-subtitle">Emergency Response Terminal v2.8</div>
+        </div>
+      </div>
+      <div class="first-night-badge"></div>
+    </div>
+    <div class="header-right">
+      <div class="system-status">
+        <div class="status-indicator"></div>
+        <span>SYSTEM ONLINE</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== WORKSPACE ===== -->
+  <div class="terminal-workspace">
+    
+    <!-- ===== LEFT COLUMN ===== -->
+    <div class="workspace-left">
+      
+      <!-- Call Display Panel -->
+      <div class="call-display-panel">
+        <div class="call-transcript-container"></div>
+        <div class="call-metadata-grid">
+          <div class="metadata-card">
+            <div class="metadata-label">Address</div>
+          </div>
+          <div class="metadata-card">
+            <div class="metadata-label">District</div>
+          </div>
+          <div class="metadata-card">
+            <div class="metadata-label">Caller Profile</div>
+          </div>
+          <div class="metadata-card">
+            <div class="metadata-label">Call Duration</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Database Panel - 3 COLONNES -->
+      <div class="database-panel">
+        <div class="database-grid">
+          
+          <!-- HISTORY -->
+          <div class="database-column">
+            <div class="database-column-title">📂 History</div>
+            <div class="database-column-content"></div>
+          </div>
+          
+          <!-- PROTOCOLS -->
+          <div class="database-column">
+            <div class="database-column-title">📋 Protocols</div>
+            <div class="database-column-content"></div>
+          </div>
+          
+          <!-- NOTES -->
+          <div class="database-column">
+            <div class="database-column-title">📝 Notes</div>
+            <div class="database-column-content"></div>
+          </div>
+          
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== RIGHT COLUMN ===== -->
+    <div class="workspace-right">
+
+      <!-- Units Panel -->
+      <div class="units-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>🚨</span>
+            <span>Available Units</span>
+          </div>
+        </div>
+        <div class="empty-container"></div>
+      </div>
+
+      <!-- Dispatch Panel -->
+      <div class="dispatch-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>⚡</span>
+            <span>Dispatch Control</span>
+          </div>
+        </div>
+        
+        <div class="dispatch-content">
+          <!-- Zone pour boutons dispatch -->
+          <div class="dispatch-actions">
+            <div class="empty-container"></div>
+          </div>
+          
+          <!-- Resource Monitor -->
+          <div class="resource-monitor">
+            <div class="resource-title">Resource Availability</div>
+            <div class="resource-grid">
+              <div class="resource-item">
+                <span class="resource-label">Selected:</span>
+                <span class="resource-value"></span>
+              </div>
+              <div class="resource-item">
+                <span class="resource-label">Police:</span>
+                <span class="resource-value"></span>
+              </div>
+              <div class="resource-item">
+                <span class="resource-label">Fire:</span>
+                <span class="resource-value"></span>
+              </div>
+              <div class="resource-item">
+                <span class="resource-label">Medical:</span>
+                <span class="resource-value"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stats Panel -->
+      <div class="stats-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span>📊</span>
+            <span>Shift Performance</span>
+          </div>
+        </div>
+        
+        <div class="stats-grid">
+          <div class="stat-row">
+            <span class="stat-name">Calls Handled</span>
+            <span class="stat-data"></span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Success Rate</span>
+            <span class="stat-data"></span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Failed Calls</span>
+            <span class="stat-data"></span>
+          </div>
+          <div class="stat-row">
+            <span class="stat-name">Performance</span>
+            <span class="stat-data"></span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// ===== SYSTÈME DE STRESS (VERSION SMOOTH MAXIMALE) =====
+let currentStress = 0;
+let targetStress = 0;
+let animationFrameId = null;
+
+window.updateStress = function(newStress) {
+  console.log('📊 Blueprint called updateStress:', newStress);
+  targetStress = Math.max(0, Math.min(100, newStress));
+  animateStressBar();
+};
+
+// Animation progressive TRÈS LENTE
+function animateStressBar() {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
+  
+  const animate = () => {
+    const diff = targetStress - currentStress;
+    
+    if (Math.abs(diff) > 0.1) {
+      currentStress += diff * 0.015;
+      updateStressDisplay(currentStress);
+      animationFrameId = requestAnimationFrame(animate);
+    } else {
+      currentStress = targetStress;
+      updateStressDisplay(currentStress);
+      animationFrameId = null;
+    }
+  };
+  
+  animate();
+}
+
+// Met à jour l'affichage
+function updateStressDisplay(stress) {
+  const roundedStress = Math.round(stress);
+  
+  const percentEl = document.getElementById('guiltPercent');
+  const barEl = document.getElementById('guiltBar');
+  
+  if (!percentEl || !barEl) {
+    console.error('❌ Stress elements not found!');
+    return;
+  }
+  
+  percentEl.textContent = roundedStress + '%';
+  barEl.style.width = stress + '%';
+  
+  // Change la couleur en fonction du niveau
+  if (stress < 25) {
+    barEl.style.background = 'linear-gradient(90deg, #3a5a4a 0%, #4a6a5a 100%)';
+    barEl.style.boxShadow = '0 0 8px rgba(58, 90, 74, 0.6)';
+  } else if (stress < 50) {
+    barEl.style.background = 'linear-gradient(90deg, #5a5a3a 0%, #7a6a3e 100%)';
+    barEl.style.boxShadow = '0 0 10px rgba(122, 106, 62, 0.6)';
+  } else if (stress < 75) {
+    barEl.style.background = 'linear-gradient(90deg, #7a5a3a 0%, #8b4a3a 100%)';
+    barEl.style.boxShadow = '0 0 12px rgba(139, 74, 58, 0.7)';
+  } else {
+    barEl.style.background = 'linear-gradient(90deg, #8b3a3a 0%, #a03a3a 100%)';
+    barEl.style.boxShadow = '0 0 15px rgba(139, 58, 58, 0.9)';
+  }
+}
+
+// Initialise à 0
+window.updateStress(0);
+
+console.log('✅ Structure vide chargée - Stress bar active - Prête pour Blueprint');
+</script>
+
+</body>
+</html>
