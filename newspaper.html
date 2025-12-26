@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Chronicle - Breaking News</title>
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #0a0a0f 0%, #050508 100%);
+  overflow-y: auto;
+  font-family: 'Times New Roman', serif;
+}
+
+.newspaper-container {
+  background: linear-gradient(180deg, #1a1a22 0%, #12121a 100%);
+  max-width: 850px;
+  margin: 40px auto;
+  padding: 45px 55px;
+  box-shadow: 0 20px 80px rgba(0, 0, 0, 0.9);
+  color: #e8e8e8;
+  border: 1px solid #2a2a35;
+  position: relative;
+}
+
+.header {
+  border-top: 3px solid #e8e8e8;
+  border-bottom: 3px solid #e8e8e8;
+  padding: 18px 0;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.logo {
+  font-size: 56px;
+  font-weight: 900;
+  letter-spacing: 8px;
+  text-transform: uppercase;
+  color: #e8e8e8;
+}
+
+.subtitle {
+  font-size: 10px;
+  letter-spacing: 3px;
+  margin-top: 8px;
+  font-weight: bold;
+  color: #888;
+  border-top: 1px solid #444;
+  border-bottom: 1px solid #444;
+  padding: 4px 0;
+  display: inline-block;
+}
+
+.date-bar {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 10px 0;
+  border-bottom: 2px solid #e8e8e8;
+  margin-bottom: 30px;
+  color: #999;
+}
+
+.breaking {
+  color: #c41e3a;
+  font-weight: 900;
+}
+
+.headline {
+  font-size: 58px;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 20px;
+  color: #e8e8e8;
+  text-align: center;
+  letter-spacing: -1px;
+  border-top: 4px solid #e8e8e8;
+  border-bottom: 4px solid #e8e8e8;
+  padding: 25px 10px;
+}
+
+.subheadline {
+  font-size: 19px;
+  font-weight: 600;
+  margin-bottom: 30px;
+  text-align: center;
+  line-height: 1.5;
+  border-bottom: 1px solid #444;
+  padding-bottom: 20px;
+  color: #ccc;
+  font-style: italic;
+}
+
+.article-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: #d0d0d0;
+}
+
+.article-text p {
+  margin: 0 0 18px 0;
+}
+
+.highlight {
+  background: linear-gradient(135deg, rgba(196, 30, 58, 0.2) 0%, rgba(196, 30, 58, 0.1) 100%);
+  border: 2px solid #c41e3a;
+  padding: 20px 25px;
+  margin: 25px 0;
+  text-align: center;
+}
+
+.victims {
+  border: 2px solid #444;
+  padding: 20px;
+  margin: 25px 0;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.victims-title {
+  font-weight: 900;
+  margin-bottom: 12px;
+  font-size: 13px;
+  border-bottom: 1px solid #555;
+  padding-bottom: 8px;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.victims-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 15px;
+  font-size: 14px;
+  color: #e8e8e8;
+}
+
+.quote {
+  font-style: italic;
+  border-left: 3px solid #666;
+  padding: 15px 20px;
+  margin: 25px 0;
+  background: rgba(255, 255, 255, 0.03);
+  color: #ccc;
+  font-size: 14px;
+}
+
+.hold-button {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  background: rgba(30, 30, 40, 0.95);
+  padding: 14px 22px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+  border: 2px solid #e8e8e8;
+}
+
+.hold-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: bold;
+  color: #e8e8e8;
+  position: relative;
+  font-family: monospace;
+  background: #2a2a35;
+  border: 2px solid #444;
+}
+</style>
+</head>
+<body>
+
+<div class="newspaper-container">
+  <div class="header">
+    <div class="logo">The Chronicle</div>
+    <div class="subtitle">ESTABLISHED 1952 • NIGHT EDITION</div>
+  </div>
+  
+  <div class="date-bar">
+    <div>SATURDAY, DECEMBER 21, 2025</div>
+    <div class="breaking">⚠️ BREAKING NEWS</div>
+    <div>VOL. 73, NO. 234</div>
+  </div>
+  
+  <div class="headline">
+    FAMILY OF THREE<br>DIES IN HOUSE FIRE
+  </div>
+  
+  <div class="subheadline">
+    911 dispatcher failed to send units — Three dead
+  </div>
+  
+  <div class="article-text">
+    <p>
+      <strong style="font-size: 16px; color: #fff;">MAPLE STREET —</strong> Three members of the Torres family died Saturday morning in a preventable house fire after a 911 dispatcher closed their emergency call without sending units.
+    </p>
+    
+    <p>
+      Michael Torres, 42, called 911 at 12:18 AM reporting flickering lights and electrical issues. <strong style="color: #fff;">The dispatcher closed the call, advising him to contact the utility company.</strong>
+    </p>
+    
+    <p>
+      30 minutes later, the house was engulfed in flames. Torres, his wife Sarah (38), and daughter Emma (7) were unable to escape.
+    </p>
+  </div>
+  
+  <div class="highlight">
+    <div style="font-weight: 900; font-size: 17px; color: #fff; margin-bottom: 8px;">
+      ⚠️ NO UNITS DISPATCHED
+    </div>
+    <div style="font-size: 14px; color: #e8e8e8;">
+      Fire Chief: "If notified during the first call, we could have been on scene in 6 minutes. This was entirely preventable."
+    </div>
+  </div>
+  
+  <div class="victims">
+    <div class="victims-title">VICTIMS</div>
+    <div class="victims-grid">
+      <div><strong style="color: #fff;">Michael Torres</strong><br>Age 42<br>Father, homeowner</div>
+      <div><strong style="color: #fff;">Sarah Torres</strong><br>Age 38<br>Teacher</div>
+      <div><strong style="color: #fff;">Emma Torres</strong><br>Age 7<br>2nd grader</div>
+    </div>
+  </div>
+  
+  <div class="quote">
+    "We tried calling 911 again when we saw the smoke. By the time firefighters arrived, it was too late."
+    <div style="text-align: right; margin-top: 10px; font-weight: 600; color: #888; font-size: 13px;">
+      — Patricia Chen, neighbor
+    </div>
+  </div>
+  
+  <div class="article-text">
+    <p>
+      The overnight dispatcher has been <strong style="color: #fff;">placed on administrative leave</strong> pending investigation.
+    </p>
+    <p>
+      <strong style="color: #c41e3a;">This is the third dispatch-related death this month.</strong>
+    </p>
+  </div>
+</div>
+
+<!-- Bouton Hold C -->
+<div class="hold-button">
+  <div class="hold-icon">
+    C
+    <svg style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; transform: rotate(-90deg);" viewBox="0 0 48 48">
+      <circle cx="24" cy="24" r="21" fill="none" stroke="rgba(232, 232, 232, 0.2)" stroke-width="3"/>
+      <circle id="holdCircle" cx="24" cy="24" r="21" fill="none" stroke="#e8e8e8" stroke-width="3" stroke-dasharray="131.9" stroke-dashoffset="131.9" style="transition: stroke-dashoffset 0.05s linear;"/>
+    </svg>
+  </div>
+  <span style="color: #e8e8e8; font-size: 15px; font-weight: 600;">
+    Hold to close article
+  </span>
+</div>
+
+<script>
+// Hold C pour revenir à la page principale
+let holdProgress = 0;
+let holdInterval = null;
+const circumference = 131.9;
+
+document.addEventListener('keydown', function(e) {
+  if (e.key.toLowerCase() === 'c') {
+    if (!holdInterval) {
+      holdInterval = setInterval(function() {
+        holdProgress += 2.5;
+        const offset = circumference - (circumference * holdProgress / 100);
+        const circle = document.getElementById('holdCircle');
+        if (circle) {
+          circle.style.strokeDashoffset = offset;
+        }
+        
+        if (holdProgress >= 100) {
+          // Signal Blueprint pour revenir à la page principale
+          if (window.ue && window.ue.game) {
+            window.ue.game.closenewspaper();
+          }
+        }
+      }, 50);
+    }
+  }
+});
+
+document.addEventListener('keyup', function(e) {
+  if (e.key.toLowerCase() === 'c') {
+    if (holdInterval) {
+      clearInterval(holdInterval);
+      holdInterval = null;
+      holdProgress = 0;
+      const circle = document.getElementById('holdCircle');
+      if (circle) {
+        circle.style.strokeDashoffset = circumference;
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
+```
+
+---
+
+## 🔧 **B. MODIFIER TON BLUEPRINT**
+
+### **Dans Button_Close :**
+
+Remplace le **Execute JavaScript** par **Load URL** :
+```
+[Branch: CurrentCallID == "CALL_001" TRUE]
+    ↓
+[Stress +25]
+    ↓
+[Load URL] ← NOUVEAU !
+    Target: GET WebBrowser
+    New URL: "file:///C:/TonProjet/newspaper.html"  ← CHANGE LE CHEMIN
+    ↓
+[Execute JavaScript: updateStress(...)]
+    ↓
+[... reste ...]
+```
+
+**Comment faire :**
+1. Cherche **"Load URL"**
+2. **Target** = GET WebBrowser
+3. **New URL** = le chemin COMPLET vers `newspaper.html`
+
+Exemple de chemin :
+```
+file:///C:/Users/TonNom/Documents/Unreal Projects/NightShift911/Content/HTML/newspaper.html
+```
+
+---
+
+## 🔄 **C. CRÉER UN CUSTOM EVENT "CloseNewspaper"**
+
+1. Crée un **Custom Event** nommé **"CloseNewspaper"**
+2. Dans ce event :
+```
+[CloseNewspaper]
+    ↓
+[Load URL]
+    Target: GET WebBrowser
+    New URL: "file:///C:/TonProjet/dispatch.html"  ← Ta page principale
