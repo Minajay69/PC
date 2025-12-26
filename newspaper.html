@@ -281,10 +281,9 @@ document.addEventListener('keydown', function(e) {
         }
         
         if (holdProgress >= 100) {
-          // Signal Blueprint pour revenir à la page principale
-          if (window.ue && window.ue.game) {
-            window.ue.game.closenewspaper();
-          }
+          clearInterval(holdInterval);
+          // RETOUR DIRECT À LA PAGE PRINCIPALE
+          window.location.href = 'https://minajay69.github.io/PC/test_bon.html';
         }
       }, 50);
     }
@@ -305,6 +304,5 @@ document.addEventListener('keyup', function(e) {
   }
 });
 </script>
-
 </body>
 </html>
